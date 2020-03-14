@@ -1,6 +1,8 @@
 import collections as q
 from profilehooks import timecall
-from heapq import *
+from heapq import heappush
+from heapq import heappop
+from math import inf
 
 
 class Node:
@@ -24,16 +26,17 @@ class Node:
         cost -> <Int|Float> Cost of the generation of New Node
     """
 
-    def expand(self, func, cost=0):
+    def expand(self, func, cost=0, addchildren=True):
         value = func(self.value)
         if value is None:
             return
         node = Node(value=value,
                     depth=self.depth + 1,
-                    cost=cost+self.path_cost,
+                    cost=cost + self.path_cost,
                     parent=self,
                     func=func.__name__)
-        self.children.append(node)
+        if addchildren:
+            self.children.append(node)
         return node
 
     def __repr__(self):
@@ -60,8 +63,8 @@ class Node:
         return self.value.__hash__()
 
 
-class NodeTree:
-    def __init__(self, root):
+class SearchTree:
+    def __init__(self, root, startingPlayer=0):
         if isinstance(root, Node):
             self.root = root
         self.queue = q.deque()
@@ -69,8 +72,17 @@ class NodeTree:
         self.queue.append(root)
         self.visited = set()
 
+    def resetTree(self):
+        self.queue.clear()
+        self.heap.clear()
+        self.visited.clear()
+        self.root.children.clear()
+
+    # Closed Search
+
     @timecall
     def breadthSearch(self, func, goal=None, checkGoal=None, depth=-1):
+
         if isinstance(func, list):
             while len(self.queue) != 0:
                 n = self.queue.popleft()
@@ -98,6 +110,7 @@ class NodeTree:
                      goal=None,
                      checkGoal=None,
                      depth=-1):
+
         order = 0
         if len(self.root.children) == 0:
             heappush(self.heap, (self.root.path_cost, order, self.root))
@@ -114,8 +127,7 @@ class NodeTree:
                         continue
                     if newnode.depth == depth:
                         continue
-                    heappush(self.heap,
-                             (newnode.path_cost, order, newnode))
+                    heappush(self.heap, (newnode.path_cost, order, newnode))
                     order += 1
                     if checkGoal is None:
                         if newnode.value == goal:
@@ -131,6 +143,7 @@ class NodeTree:
                      goal=None,
                      checkGoal=None,
                      depth=-1):
+
         order = 0
         if len(self.root.children) == 0:
             heappush(self.heap, (heuristic(self.root.value), order, self.root))
@@ -158,10 +171,12 @@ class NodeTree:
                             return newnode
 
     @timecall
-    def a_star(self, func, heuristic, goal=None, checkGoal=None,depth=-1):
+    def a_star(self, func, heuristic, goal=None, checkGoal=None, depth=-1):
         order = 0
         if len(self.root.children) == 0:
-            heappush(self.heap, (heuristic(self.root.value) + self.root.path_cost, order, self.root))
+            heappush(self.heap,
+                     (heuristic(self.root.value) + self.root.path_cost, order,
+                      self.root))
             order += 1
         if isinstance(func, list):
             while len(self.heap) != 0:
@@ -176,7 +191,8 @@ class NodeTree:
                     if newnode.depth == depth:
                         continue
                     heappush(self.heap,
-                             (heuristic(newnode.value) + newnode.path_cost, order, newnode))
+                             (heuristic(newnode.value) + newnode.path_cost,
+                              order, newnode))
                     order += 1
                     if checkGoal is None:
                         if newnode.value == goal:
@@ -185,19 +201,79 @@ class NodeTree:
                         if checkGoal(newnode):
                             return newnode
 
+    @timecall
+    def hillClimb(self, func, heuristic):
+        if isinstance(func, list):
+            node = self.root
+            nodeEval = heuristic(node.value)
+            while True:
+                nextnode = None
+                nextnodeEval = -inf
+                for f in func:
+                    newnode = node.expand(f)
+                    if newnode is not None:
+                        newnodeEval = heuristic(newnode.value)
+                        if newnodeEval > nextnodeEval:
+                            nextnode = newnode
+                            nextnodeEval = newnodeEval
+                if nodeEval >= nextnodeEval:
+                    return node
+                node = nextnode
+                nodeEval = nextnodeEval
 
-
-
-
-
-# def add(value):
-#     return value + "a"
-
-# def add1(value):
-#     return value + "b"
-
-# T = NodeTree(Node("a"))
-# node = T.breadthSearch([add, add1], goal="ababa")
-# print(node.ancestry())
-
-# exit(0)
+    @timecall
+    def tabuSearch(self,
+                   func,
+                   heuristic,
+                   tabuTernure,
+                   aspirationCriteria=False,
+                   frequency=False):
+        if isinstance(func, list) and isinstance(tabuTernure, list):
+            if len(func) != len(tabuTernure):
+                print("Tabu ternure must be of same length as function lists")
+                return
+            tabu = [0 for _ in func]
+            freq = [0 for _ in func]
+            node = self.root
+            nodeEval = heuristic(node.value)
+            while True:
+                nextnode = None
+                nextnodeEval = -inf
+                nextnodeIndex = -1
+                asps = []
+                for i, f in enumerate(func):
+                    if tabu[i] != 0:
+                        if aspirationCriteria:
+                            asps.append(f)
+                        tabu[i] -= 1
+                        continue
+                    newnode = node.expand(f, False)
+                    if newnode is None:
+                        pass
+                    tabu[i] = tabuTernure[i]
+                    newnodeEval = heuristic(newnode.value)
+                    if newnodeEval > nextnodeEval:
+                        nextnode = newnode
+                        nextnodeEval = newnodeEval
+                        if frequency:
+                            nextnodeIndex = i
+                if nextnode is None:
+                    if aspirationCriteria:
+                        for i, f in enumerate(asps):
+                            newnode = node.expand(f, False)
+                            if newnode is None:
+                                pass
+                            tabu[i] = tabuTernure[i]
+                            newnodeEval = heuristic(newnode.value)
+                            if newnodeEval > nextnodeEval:
+                                nextnode = newnode
+                                nextnodeEval = newnodeEval
+                                if frequency:
+                                    nextnodeIndex = i
+                    if nextnode is None:
+                        return node
+                if nodeEval >= nextnodeEval:
+                    node = nextnode
+                    nodeEval = nextnodeEval
+                    if frequency:
+                        freq[nextnodeIndex] += 1
