@@ -1,15 +1,25 @@
-from Slide import *
-from Photo import *
-from heuristics import *
+from DataStructure.Slide import *
+from DataStructure.Photo import *
+from Parser.InputParser import *
+from SearchTree.Heuristics import *
+from SearchTree.InitialState import *
 
 if __name__ == "__main__":
-    p1 = Photo(1, "H", ["garden", "cat"])
-    p2 = Photo(2, "V", ["smile", "garden"])
-    p3 = Photo(3, "V", ["selfie", "garden"])
+    original_vertical_photos = []
+    original_horizontal_photos = []
 
-    s1 = Slide([p1])
-    s2 = Slide([p2, p3])
+    parse_input_file(sys.argv[1], original_vertical_photos, original_horizontal_photos)   
 
-    print(getScore(s1.tags, s2.tags))
+    solution = get_solution(original_vertical_photos.copy(), original_horizontal_photos.copy())
 
-# print(vars())
+    #get N solutions to build a population and then apply genetic algorithms
+
+    print(solution)
+
+
+def get_solution(vertical_photos, horizontal_photos):
+    solution = get_initial_state(vertical_photos, horizontal_photos)
+
+    #apply algorithms
+
+    return solution
