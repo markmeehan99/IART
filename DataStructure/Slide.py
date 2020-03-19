@@ -1,7 +1,8 @@
 class Slide:
     def __init__(self, photo): #horizontal constructor
         self.orientation = 'H'
-        self.photo = photo
+        self.left_photo = photo
+        self.right_photo = None
         
         self.tags = self.photo.tags
 
