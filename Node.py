@@ -3,6 +3,8 @@ from profilehooks import timecall
 from heapq import heappush
 from heapq import heappop
 from math import inf
+from math import exp
+import random
 
 
 class Node:
@@ -228,7 +230,8 @@ class SearchTree:
                    tabuTernure,
                    aspirationCriteria=False,
                    frequency=False,
-                   freq_K=0):
+                   freq_K=0,
+                   n_iter=3000):
         if isinstance(func, list) and isinstance(tabuTernure, list):
             if len(func) != len(tabuTernure):
                 print("Tabu ternure must be of same length as function lists")
@@ -237,7 +240,8 @@ class SearchTree:
             freq = [0 for _ in func]
             node = self.root
             nodeEval = heuristic(node.value)
-            while True:
+            max_iter = n_iter
+            while max_iter != 0:
                 nextnode = None
                 nextnodeEval = -inf
                 nextnodeIndex = -1
@@ -253,7 +257,8 @@ class SearchTree:
                         pass
                     tabu[i] = tabuTernure[i]
                     if frequency:
-                        newnodeEval = heuristic(newnode.value) - freq_K*freq[i]
+                        newnodeEval = heuristic(
+                            newnode.value) - freq_K * freq[i]
                     else:
                         newnodeEval = heuristic(newnode.value)
                     if newnodeEval > nextnodeEval:
@@ -269,7 +274,8 @@ class SearchTree:
                                 pass
                             tabu[i] = tabuTernure[i]
                             if frequency:
-                                newnodeEval = heuristic(newnode.value) - freq_K*freq[i]
+                                newnodeEval = heuristic(
+                                    newnode.value) - freq_K * freq[i]
                             else:
                                 newnodeEval = heuristic(newnode.value)
                             if newnodeEval > nextnodeEval:
@@ -280,7 +286,29 @@ class SearchTree:
                     if nextnode is None:
                         return node
                 if nodeEval >= nextnodeEval:
+                    max_iter -= 1
                     node = nextnode
                     nodeEval = nextnodeEval
                     if frequency:
                         freq[nextnodeIndex] += 1
+
+    @timecall
+    def simulated_annealing(self, func, heuristic, init_T, alpha):
+        if len(func) == 0:
+            return
+        node = self.root
+        nodeEval = heuristic(self.root.value)
+        T = init_T
+        delta_e = nodeEval
+        while T != 0:
+            nextnode = func[random.randint(0, len(func) - 1)](node.value)
+            nextEval = heuristic(nextnode.value)
+            delta_e = nextEval - nodeEval
+            if delta_e > 0:
+                node = nextnode
+            else:
+                if random.random() <= (1 / (1 + exp(-delta_e / T))):
+                    node = nextnode
+            T = alpha * T
+        return node
+    
