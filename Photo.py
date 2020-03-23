@@ -3,4 +3,4 @@ class Photo:
         self.id = photoId
         self.type = type
         self.tags = tags
-        
+
