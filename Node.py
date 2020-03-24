@@ -4,6 +4,7 @@ from heapq import heappush
 from heapq import heappop
 from math import inf
 from math import exp
+from copy import deepcopy
 import random
 
 
@@ -311,4 +312,18 @@ class SearchTree:
                     node = nextnode
             T = alpha * T
         return node
-    
+
+
+def choice(objects, weights):
+    total_weight = sum(weights)
+    chances = [i / total_weight for i in weights]
+    x = random.random()
+    for i in range(len(chances)):
+        if i != 0:
+            chances[i] += chances[i-1]
+        if x < chances[i]:
+            return deepcopy(objects[i])
+
+
+def choice_n(objects, weights, N):
+    return [choice(objects, weights) for x in range(N)]
