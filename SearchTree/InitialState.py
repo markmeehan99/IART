@@ -1,4 +1,5 @@
 from DataStructure.Slide import *
+import random
 
 def get_initial_state(vertical_photos, horizontal_photos):
     n_verticalp = len(vertical_photos)
