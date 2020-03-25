@@ -128,8 +128,32 @@ class Slideshow:
         #
         #   C -> A1 B
         #   D -> B A2
-        A1 = deepcopy(A.slides[:k * minsize])
-        A2 = deepcopy(A.slides[k * minsize:])
-        B1 = deepcopy(B.slides)
+        A1 = A.slides[:k * minsize]
+        A2 = A.slides[k * minsize:]
+        B1 = B.slides
 
         return [A1 + B1, B1 + A2, A.tags.intersection(B.tags)]
+
+    @staticmethod
+    def spliceEq(A, B):
+        midpoint = len(A.slides) // 2
+        scramble = random.choice([True, False])
+        k = random.choice([True, False])
+        if scramble:
+            C = []
+            D = []
+            for i in enumerate(A.slides):
+                if i % 2 == 0:
+                    C += ([B.slides[i], A.slides[i]]
+                          if k else [A.slides[i], B.slides[i]])
+                else:
+                    D += ([B.slides[i], A.slides[i]]
+                          if k else [A.slides[i], B.slides[i]])
+            return
+        else:
+            A1 = A.slides[:midpoint]
+            A2 = A.slides[midpoint:]
+            B1 = B.slides[:midpoint]
+            B2 = B.slides[midpoint:]
+            return ([A1 + B2, B1 + A2] if k else
+                    [B2 + A2, B1 + A1]) + [A.tags.intersection(B.tags)]
