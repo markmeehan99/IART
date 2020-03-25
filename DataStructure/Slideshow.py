@@ -23,29 +23,31 @@ class Slideshow:
 
     def add_slide(self, slide):
         if slide.left_photo.id in self.current_photo_ids:
-            return
+            return False
         if slide.isVertical():
             if slide.right_photo.id in self.current_photo_ids:
-                return
+                return False
         self.slides.append(slide)
         self.current_photo_ids.add(slide.left_photo.id)
         self.missing_photo_ids.discard(slide.left_photo.id)
         if slide.isVertical():
             self.current_photo_ids.add(slide.right_photo.id)
             self.missing_photo_ids.discard(slide.right_photo.id)
+        return True
 
     def remove_slide(self, slide):
         if slide.left_photo.id not in self.current_photo_ids:
-            return
+            return False
         if slide.isVertical():
             if slide.right_photo.id not in self.current_photo_ids:
-                return
+                return False
         self.slides.remove(slide)
         self.current_photo_ids.discard(slide.left_photo.id)
         self.missing_photo_ids.add(slide.left_photo.id)
         if slide.isVertical():
             self.current_photo_ids.discard(slide.right_photo.id)
             self.missing_photo_ids.add(slide.right_photo.id)
+        return True
 
     def calcFullScore(self):
         n_slides = len(self.slides)
@@ -55,6 +57,11 @@ class Slideshow:
                 pass
             self.score += Slide.getScore(self.slides[j], self.slides[i])
             j += 1
+
+    @staticmethod
+    def get_randomPhoto(orientation):
+        photo_array = Slideshow.horizontal_photos_pool if (orientation) else Slideshow.vertical_photos_pool
+        return photo_array[random.randint(1, n_verticalp)]
 
     @staticmethod
     def get_initial_state():
@@ -73,34 +80,17 @@ class Slideshow:
 
         i = 1
         for i in range(n_slides):
-            orientation = 0  # vertical slide by default
+            orientation = 0  # 0 is vertical, 1 is horizontal
 
             if (n_verticalp > 1 and n_horizontalp > 0):
                 orientation = random.randint(0, 1)
             elif n_horizontalp > 0:
                 orientation = 1
 
-            if (orientation):  # horizontal slide
-                n = random.randint(1, n_horizontalp)
-
-                photo = Slideshow.horizontal_photos_pool[n]
-
-                # create slide
-                initial_solution.add_slide(Slide(photo))
-            else:  # vertical slide
-                # left photo
-                n = random.randint(1, n_verticalp)
-
-                left_photo = Slideshow.vertical_photos_pool[n]
-
-                n_verticalp -= 1
-
-                # right photo
-                n = random.randint(1, n_verticalp)
-
-                right_photo = Slideshow.vertical_photos_pool[n]
-
-                # create slide
-                initial_solution.add_slide(Slide(left_photo, right_photo))
-
+            while True:
+                photo = Slideshow.get_randomPhoto(orientation)
+                if initial_solution.add_slide(Slide(photo)):
+                    break
         return initial_solution
+
+        
