@@ -1,10 +1,13 @@
 from copy import deepcopy
-from Slide import Slide
+from DataStructure.Slide import Slide
 import random
+from profilehooks import timecall
 
 
 class Slideshow:
     horizontal_photos_pool = []
+    h_photos_size = 0
+    v_photos_size = 0
     all_ids_set = set()
     vertical_photos_pool = []
 
@@ -49,37 +52,51 @@ class Slideshow:
             self.missing_photo_ids.add(slide.right_photo.id)
         return True
 
+    @timecall
+    def getScore(self):
+        return self.score
+
+    @timecall
     def calcFullScore(self):
         n_slides = len(self.slides)
+        self.score = 0
         j = -1
         for i in range(n_slides):
             if j == -1 or i == n_slides:
                 pass
             self.score += Slide.getScore(self.slides[j], self.slides[i])
             j += 1
+        return self.score
+
+    def __repr__(self):
+        return self.slides.__repr__()
+
+    def __len__(self):
+        return len(self.slides)
 
     @staticmethod
     def get_randomPhoto(orientation):
         photo_array = Slideshow.horizontal_photos_pool if (
-            orientation) else Slideshow.vertical_photos_pool
-        n_photos = len(Slideshow.horizontal_photos_pool) if (
-            orientation) else len(Slideshow.vertical_photos_pool)
-        return photo_array[random.randint(1, n_photos)]
+            orientation == 1) else Slideshow.vertical_photos_pool
+        n_photos = Slideshow.h_photos_size if (orientation == 1) else Slideshow.v_photos_size
+        i = random.randint(0, n_photos - 1)
+        return photo_array[i]
 
     @staticmethod
-    def get_initial_state():
-        n_verticalp = len(Slideshow.vertical_photos_pool)
-        n_horizontalp = len(Slideshow.horizontal_photos_pool)
-        n_max_slides = n_horizontalp
+    def get_initial_state(n_max_slides=None):
+        n_verticalp = Slideshow.v_photos_size
+        n_horizontalp = Slideshow.h_photos_size
+        if n_max_slides is None:
+            n_max_slides = n_horizontalp
 
         if n_verticalp % 2:
-            n_max_slides += n_verticalp / 2
+            n_max_slides += n_verticalp // 2
         else:
-            n_max_slides += (n_verticalp - 1) / 2
+            n_max_slides += (n_verticalp - 1) // 2
 
-        n_slides = random.randint(1, n_max_slides)
+        n_slides = random.randint(1, n_max_slides - 1)
 
-        initial_solution = Slideshow()
+        initial_solution = Slideshow([])
 
         i = 1
         for i in range(n_slides):
@@ -132,7 +149,7 @@ class Slideshow:
         A2 = A.slides[k * minsize:]
         B1 = B.slides
 
-        return [A1 + B1, B1 + A2, A.tags.intersection(B.tags)]
+        return [A1 + B1, B1 + A2]
 
     @staticmethod
     def spliceEq(A, B):
@@ -149,11 +166,14 @@ class Slideshow:
                 else:
                     D += ([B.slides[i], A.slides[i]]
                           if k else [A.slides[i], B.slides[i]])
-            return
+            return [C, D]
         else:
             A1 = A.slides[:midpoint]
             A2 = A.slides[midpoint:]
             B1 = B.slides[:midpoint]
             B2 = B.slides[midpoint:]
-            return ([A1 + B2, B1 + A2] if k else
-                    [B2 + A2, B1 + A1]) + [A.tags.intersection(B.tags)]
+            return ([A1 + B2, B1 + A2] if k else [B2 + A2, B1 + A1])
+
+    @staticmethod
+    def RemDups(slideList):
+        return list(dict.fromkeys(slideList))

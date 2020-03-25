@@ -22,6 +22,18 @@ class Slide:
                 return False
         return True
 
+    def __hash__(self):
+        h = hash(self.left_photo)
+        if self.isVertical():
+            h += hash(self.right_photo)
+        return h
+    
+    def __repr__(self):
+        s = "[" + self.left_photo.__repr__()
+        if self.isVertical():
+            s += ", " + self.right_photo.__repr__()
+        return s + "]"
+
     # Heuristics
     @staticmethod
     def getCommonTagsCount(prevSlide, nextSlide):
