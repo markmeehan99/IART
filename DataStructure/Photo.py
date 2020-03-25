@@ -4,3 +4,5 @@ class Photo:
         self.orientation = orientation
         self.tags = tags
 
+    def __eq__(self, value):
+        return self.id == value.id

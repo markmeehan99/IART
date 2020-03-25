@@ -1,7 +1,9 @@
 import sys
-from DataStructure.Photo import *
+from DataStructure.Photo import Photo as Photo
+from DataStructure.Slideshow import Slideshow
 
-def parse_input_file(file_name, vertical_photos, horizontal_photos):
+
+def parse_input_file(file_name):
     with open(file_name) as input_file:
         num_photos = input_file.readline()
 
@@ -9,9 +11,10 @@ def parse_input_file(file_name, vertical_photos, horizontal_photos):
         for new_photo in input_file:
             [orientation, num_tags, tags] = new_photo.rstrip().split(" ", 2)
             if orientation == 'H':
-                horizontal_photos.gallery.append(Photo(id, orientation, tags))
-
+                Slideshow.horizontal_photos_pool.append(
+                    Photo(id, orientation, tags))
             elif orientation == 'V':
-                vertical_photos.gallery.append(Photo(id, orientation, tags))
-
+                Slideshow.vertical_photos_pool.append(
+                    Photo(id, orientation, tags))
+            Slideshow.all_ids_set.add(id)
             id += 1
