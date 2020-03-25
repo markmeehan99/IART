@@ -61,7 +61,8 @@ class Slideshow:
     @staticmethod
     def get_randomPhoto(orientation):
         photo_array = Slideshow.horizontal_photos_pool if (orientation) else Slideshow.vertical_photos_pool
-        return photo_array[random.randint(1, n_verticalp)]
+        n_photos = len(Slideshow.horizontal_photos_pool) if (orientation) else len(Slideshow.vertical_photos_pool)
+        return photo_array[random.randint(1, n_photos)]
 
     @staticmethod
     def get_initial_state():
@@ -92,5 +93,3 @@ class Slideshow:
                 if initial_solution.add_slide(Slide(photo)):
                     break
         return initial_solution
-
-        
