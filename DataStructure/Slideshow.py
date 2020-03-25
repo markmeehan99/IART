@@ -60,8 +60,11 @@ class Slideshow:
 
     @staticmethod
     def get_randomPhoto(orientation):
-        photo_array = Slideshow.horizontal_photos_pool if (orientation) else Slideshow.vertical_photos_pool
-        return photo_array[random.randint(1, n_verticalp)]
+        photo_array = Slideshow.horizontal_photos_pool if (
+            orientation) else Slideshow.vertical_photos_pool
+        n_photos = len(Slideshow.horizontal_photos_pool) if (
+            orientation) else len(Slideshow.vertical_photos_pool)
+        return photo_array[random.randint(1, n_photos)]
 
     @staticmethod
     def get_initial_state():
@@ -93,4 +96,40 @@ class Slideshow:
                     break
         return initial_solution
 
-        
+    @staticmethod
+    def reproduce(S1, S2):
+        slides_size1 = len(S1.slides)
+        slides_size2 = len(S1.slides)
+        # if slides_size1 != slides_size2:
+
+    @staticmethod
+    def spliceDif(S1, S2, size1, size2):
+        minsize = min(size1, size2)
+        # A is the biggest chromossome, B is the smallest
+        A = None
+        B = None
+        if size1 == minsize:
+            A = S2
+            B = S1
+        else:
+            A = S1
+            B = S2
+        k = random.choice([-1, 1])
+        # k = 1
+        #         A1 | A2
+        #   A -> XXXX XXXXX
+        #   B -> XXXX
+        #
+        # k = -1
+        #         A1  | A2
+        #   A -> XXXXX XXXX
+        #   B -> XXXX
+        #
+        #
+        #   C -> A1 B
+        #   D -> B A2
+        A1 = deepcopy(A.slides[:k * minsize])
+        A2 = deepcopy(A.slides[k * minsize:])
+        B1 = deepcopy(B.slides)
+
+        return [A1 + B1, B1 + A2, A.tags.intersection(B.tags)]
