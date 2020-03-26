@@ -3,6 +3,7 @@ from DataStructure.Photo import *
 from Parser.InputParser import *
 from profilehooks import timecall
 from SearchTree.GeneticAlgorithm import geneticAlgorithm
+from SearchTree.GeneticAlgorithm import generateRandomPairs
 
 
 @timecall
@@ -42,7 +43,9 @@ if __name__ == "__main__":
     original_vertical_photos = []
     original_horizontal_photos = []
 
+
     parse_input_file(sys.argv[1])
-    pop = gen_N(30)
-    newpop = geneticAlgorithm(pop, Slideshow.getScore)
-    print(sorted(list(map(Slideshow.getScore, newpop))))
+    # pop = gen_N(30)
+    print(Slideshow.get_initial_state(10,True))
+    # newpop = geneticAlgorithm(pop, Slideshow.getScore)
+    # print(sorted(list(map(Slideshow.getScore, newpop))))

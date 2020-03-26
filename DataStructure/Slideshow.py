@@ -6,11 +6,11 @@ from profilehooks import timecall
 
 class Slideshow:
     horizontal_photos_pool = dict()
+    vertical_photos_pool = dict()
     h_photos_size = 0
     v_photos_size = 0
     all_ids_set_h = set()
     all_ids_set_v = set()
-    vertical_photos_pool = dict()
 
     def __init__(self, primary_solution):
         self.score = 0
@@ -167,8 +167,8 @@ class Slideshow:
         k = random.choice([-1, 1])
         # k = 1
         #         A1 | A2
-        #   A -> XXXX XXXXX
-        #   B -> XXXX
+        #   A -> XXXX XXXXX 7
+        #   B -> XXXX       4
         #
         # k = -1
         #         A1  | A2
