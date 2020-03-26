@@ -5,11 +5,12 @@ from profilehooks import timecall
 
 
 class Slideshow:
-    horizontal_photos_pool = []
+    horizontal_photos_pool = dict()
     h_photos_size = 0
     v_photos_size = 0
-    all_ids_set = set()
-    vertical_photos_pool = []
+    all_ids_set_h = set()
+    all_ids_set_v = set()
+    vertical_photos_pool = dict()
 
     def __init__(self, primary_solution):
         self.score = 0
@@ -18,11 +19,17 @@ class Slideshow:
     def set_slides(self, solution):
         self.slides = solution
         self.current_photo_ids = set()
-        self.missing_photo_ids = deepcopy(Slideshow.all_ids_set)
+        self.missing_photo_ids_v = deepcopy(Slideshow.all_ids_set_v)
+        self.missing_photo_ids_h = deepcopy(Slideshow.all_ids_set_h)
         for slide in solution:
-            self.current_photo_ids.add(slide.left_photo.id)
-            if slide.right_photo is not None:
+            if slide.isVertical():
+                self.current_photo_ids.add(slide.left_photo.id)
                 self.current_photo_ids.add(slide.right_photo.id)
+                self.missing_photo_ids_v.discard(slide.left_photo.id)
+                self.missing_photo_ids_v.discard(slide.right_photo.id)
+            else:
+                self.current_photo_ids.add(slide.left_photo.id)
+                self.missing_photo_ids_h.discard(slide.left_photo.id)
 
     def add_slide(self, slide):
         if slide.left_photo.id in self.current_photo_ids:
@@ -31,11 +38,14 @@ class Slideshow:
             if slide.right_photo.id in self.current_photo_ids:
                 return False
         self.slides.append(slide)
-        self.current_photo_ids.add(slide.left_photo.id)
-        self.missing_photo_ids.discard(slide.left_photo.id)
         if slide.isVertical():
+            self.current_photo_ids.add(slide.left_photo.id)
             self.current_photo_ids.add(slide.right_photo.id)
-            self.missing_photo_ids.discard(slide.right_photo.id)
+            self.missing_photo_ids_v.discard(slide.left_photo.id)
+            self.missing_photo_ids_v.discard(slide.right_photo.id)
+        else:
+            self.current_photo_ids.add(slide.left_photo.id)
+            self.missing_photo_ids_h.discard(slide.left_photo.id)
         return True
 
     def remove_slide(self, slide):
@@ -75,42 +85,61 @@ class Slideshow:
         return len(self.slides)
 
     @staticmethod
-    def get_randomPhoto(orientation):
-        photo_array = Slideshow.horizontal_photos_pool if (
-            orientation == 1) else Slideshow.vertical_photos_pool
-        n_photos = Slideshow.h_photos_size if (orientation == 1) else Slideshow.v_photos_size
-        i = random.randint(0, n_photos - 1)
-        return photo_array[i]
+    def get_randomPhoto(orientation, sample_h, sample_v):
+        if orientation == 'H':
+            s_h = len(sample_h)
+            if  s_h == 0:
+                return None
+            i = random.sample(sample_h, 1)[0]
+            return [Slideshow.horizontal_photos_pool[i]]
+        elif orientation == 'V':
+            s_v = len(sample_v)
+            if  s_v == 0 or s_v == 1:
+                return None
+            i = random.sample(sample_v, 2)
+            return [
+                Slideshow.vertical_photos_pool[i[0]],
+                Slideshow.vertical_photos_pool[i[1]]
+            ]
 
     @staticmethod
-    def get_initial_state(n_max_slides=None):
+    def get_initial_state(top=None):
         n_verticalp = Slideshow.v_photos_size
         n_horizontalp = Slideshow.h_photos_size
-        if n_max_slides is None:
+        n_max_slides = top
+        if top is None:
             n_max_slides = n_horizontalp
-
-        if n_verticalp % 2:
-            n_max_slides += n_verticalp // 2
-        else:
-            n_max_slides += (n_verticalp - 1) // 2
+            if n_verticalp % 2:
+                n_max_slides += n_verticalp // 2
+            else:
+                n_max_slides += (n_verticalp - 1) // 2
 
         n_slides = random.randint(1, n_max_slides - 1)
 
         initial_solution = Slideshow([])
 
-        i = 1
-        for i in range(n_slides):
-            orientation = 0  # 0 is vertical, 1 is horizontal
+        possible = []
+        if n_verticalp > 0:
+            possible.append('V')
+        if n_horizontalp > 0:
+            possible.append('H')
 
-            if (n_verticalp > 1 and n_horizontalp > 0):
-                orientation = random.randint(0, 1)
-            elif n_horizontalp > 0:
-                orientation = 1
+        for i in range(n_slides):
+
+            orientation = random.sample(possible, 1)[0]
 
             while True:
-                photo = Slideshow.get_randomPhoto(orientation)
-                if initial_solution.add_slide(Slide(photo)):
-                    break
+                photos = Slideshow.get_randomPhoto(
+                    orientation, initial_solution.missing_photo_ids_h,
+                    initial_solution.missing_photo_ids_v)
+                if photos is None:
+                    continue
+                if orientation == 'V':
+                    if initial_solution.add_slide(Slide(photos[0], photos[1])):
+                        break
+                else:
+                    if initial_solution.add_slide(Slide(photos[0])):
+                        break
         return initial_solution
 
     @staticmethod

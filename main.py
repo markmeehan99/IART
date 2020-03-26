@@ -8,8 +8,7 @@ from profilehooks import timecall
 def gen_N(N):
     s = []
     for i in range(N):
-        s.append(Slideshow.get_initial_state())
-        print(i,len(s[-1]))
+        s.append(Slideshow.get_initial_state(100))
     return s
 
 
@@ -20,10 +19,7 @@ if __name__ == "__main__":
 
     parse_input_file(sys.argv[1])
 
-    # print(Slideshow.vertical_photos_pool)
-    # print(Slideshow.horizontal_photos_pool)
-    # s = []
-    # for x in range(10):
-    #     s.append(Slideshow.get_initial_state())
-    s = gen_N(1)
-
+    
+    for i in gen_N(20):
+        print(i)
+    
