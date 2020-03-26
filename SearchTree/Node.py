@@ -223,6 +223,7 @@ class SearchTree:
                     return node
                 node = nextnode
                 nodeEval = nextnodeEval
+                print(nodeEval)
 
     @timecall
     def tabuSearch(self,

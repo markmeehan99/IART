@@ -2,7 +2,7 @@ from DataStructure import *
 from DataStructure.Photo import *
 from Parser.InputParser import *
 from profilehooks import timecall
-from SearchTree import Node
+from SearchTree.Node import *
 from SearchTree.GeneticAlgorithm import geneticAlgorithm
 from SearchTree.GeneticAlgorithm import generateRandomPairs
 
@@ -46,8 +46,14 @@ if __name__ == "__main__":
 
 
     parse_input_file(sys.argv[1])
-    pop = gen_N(30)
-    # s = Slideshow.get_initial_state(10,True)
+    #pop = gen_N(30)
+    s = Slideshow.get_initial_state(100, True)
+    tree = SearchTree(Node(s))
+
+    operators = [Slideshow.add_horizontal, Slideshow.add_vertical, Slideshow.remove_smallest_transition, 
+        Slideshow.remove_random_slide, Slideshow.trade_random]
+
+    print(tree.hillClimb(operators, Slideshow.getScore))
     # newpop = geneticAlgorithm(pop, Slideshow.getScore)
     # print(sorted(list(map(Slideshow.getScore, newpop))))
     # sol = geneticAlgorithm(pop,Slideshow.getScore,)

@@ -48,6 +48,7 @@ class Slideshow:
             self.missing_photo_ids_h.discard(slide.left_photo.id)
         return True
 
+
     def remove_slide(self, slide):
         if slide.left_photo.id not in self.current_photo_ids:
             return False
@@ -56,10 +57,12 @@ class Slideshow:
                 return False
         self.slides.remove(slide)
         self.current_photo_ids.discard(slide.left_photo.id)
-        self.missing_photo_ids.add(slide.left_photo.id)
         if slide.isVertical():
             self.current_photo_ids.discard(slide.right_photo.id)
-            self.missing_photo_ids.add(slide.right_photo.id)
+            self.missing_photo_ids_v.add(slide.left_photo.id)
+            self.missing_photo_ids_v.add(slide.right_photo.id)
+        else:
+            self.missing_photo_ids_h.add(slide.left_photo.id)
         return True
 
     @staticmethod
@@ -90,14 +93,12 @@ class Slideshow:
     @staticmethod
     def get_randomPhoto(orientation, sample_h, sample_v):
         if orientation == 'H':
-            s_h = len(sample_h)
-            if s_h == 0:
+            if len(sample_h) == 0:
                 return None
             i = random.sample(sample_h, 1)[0]
             return [Slideshow.horizontal_photos_pool[i]]
         elif orientation == 'V':
-            s_v = len(sample_v)
-            if s_v == 0 or s_v == 1:
+            if len(sample_v) < 2:
                 return None
             i = random.sample(sample_v, 2)
             return [
@@ -106,15 +107,79 @@ class Slideshow:
             ]
 
     @staticmethod
-    def add_horizontal(S):
-        p = S.get_randomPhoto("H", S.missing_photo_ids_h, S.missing_photo_ids_v)[0]
-        return S.add_slide(Slide(p[0]))
+    def get_slides_byOrientation(orientation, slides):
+        indexes = []
+        n_slides = len(slides)
+        i=0
+        for i in range(n_slides):
+            if slides[i].orientation == orientation:
+                indexes.append(i)
+        return indexes
+    
+    #----------------------OPERATORS---------------------#
+
+    #add operators
+    @staticmethod
+    def add_horizontal(Soriginal):
+        S = deepcopy(Soriginal)
+
+        p = S.get_randomPhoto('H', S.missing_photo_ids_h, None)
+        if len(p) < 1:
+            return None
+        return S if S.add_slide(Slide(p[0])) else None
 
     @staticmethod
-    def add_vertical(S):
-        p = S.get_randomPhoto("V", S.missing_photo_ids_h, S.missing_photo_ids_v)
-        return S.add_slide(Slide(p[0]), Slide(p[1]))
+    def add_vertical(Soriginal):
+        S = deepcopy(Soriginal)
 
+        p = S.get_randomPhoto('V', None, S.missing_photo_ids_v)
+        if len(p) < 2:
+            return None
+        return S if S.add_slide(Slide(p[0], p[1])) else None
+
+    #remove operators
+    @staticmethod
+    def remove_smallest_transition(Soriginal):
+        S = deepcopy(Soriginal)
+        result = None
+
+        i=0
+        n_slide = len(S.slides)
+        for i in range(n_slide):
+            if i == 0 and Slide.getScore(S.slides[0], S.slides[1]) == 0:
+                result = 0
+            elif result == None and i == n_slide-1 and Slide.getScore(S.slides[i-1], S.slides[i]) == 0:
+                result = i
+            elif i > 0 and i < n_slide-1:
+                previous_transition = Slide.getScore(S.slides[i-1], S.slides[i])
+                next_transition = Slide.getScore(S.slides[i], S.slides[i+1])
+                new_transition = Slide.getScore(S.slides[i-1], S.slides[i+1])
+                total = new_transition - previous_transition - next_transition
+                if total > 0:
+                    result = i
+
+        return S if S.remove_slide(S.slides[i]) else None
+    
+    @staticmethod
+    def remove_random_slide(Soriginal):
+        S = deepcopy(Soriginal)
+
+        i = random.sample(S.slides, 1)[0]
+        return S if S.remove_slide(i) else None
+
+    #trade operators 
+    @staticmethod
+    def trade_random(Soriginal):
+        S = deepcopy(Soriginal)
+        indexes = [x for x in range(len(S.slides))]
+        [i1,i2] = random.sample(indexes, 2)
+        slide_aux = S.slides[i2]
+
+        S.slides[i2] = S.slides[i1]
+        S.slides[i1] = slide_aux
+
+        return S
+        
 
     @staticmethod
     def get_initial_state(top=None, exactly=False):
