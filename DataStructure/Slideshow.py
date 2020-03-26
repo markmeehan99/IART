@@ -84,6 +84,9 @@ class Slideshow:
     def __len__(self):
         return len(self.slides)
 
+    def __lt__(self, other):
+        return self.calcFullScore() < other.calcFullScore()
+
     @staticmethod
     def get_randomPhoto(orientation, sample_h, sample_v):
         if orientation == 'H':
@@ -101,7 +104,6 @@ class Slideshow:
                 Slideshow.vertical_photos_pool[i[0]],
                 Slideshow.vertical_photos_pool[i[1]]
             ]
-
 
     @staticmethod
     def add_horizontal(S):

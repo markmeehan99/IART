@@ -1,11 +1,12 @@
 class Slide:
     def __init__(self, left_photo, right_photo=None):
-        self.orientation = 'V'
+        self.orientation = 'H'
         self.left_photo = left_photo
         self.right_photo = right_photo
 
         if right_photo is not None:
             self.tags = set(self.left_photo.tags) | set(self.right_photo.tags)
+            self.orientation = 'V'
         else:
             self.tags = set(left_photo.tags)
 
