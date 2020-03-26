@@ -19,7 +19,11 @@ if __name__ == "__main__":
 
     parse_input_file(sys.argv[1])
 
-    
-    for i in gen_N(20):
+    s1 = Slideshow.get_initial_state(4,True)
+    s2 = Slideshow.get_initial_state(4, True)
+    print(s1)
+    print(s2)
+    print("children:")
+    for i in Slideshow.reproduce(s1, s2):
         print(i)
     

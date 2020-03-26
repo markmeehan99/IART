@@ -88,13 +88,13 @@ class Slideshow:
     def get_randomPhoto(orientation, sample_h, sample_v):
         if orientation == 'H':
             s_h = len(sample_h)
-            if  s_h == 0:
+            if s_h == 0:
                 return None
             i = random.sample(sample_h, 1)[0]
             return [Slideshow.horizontal_photos_pool[i]]
         elif orientation == 'V':
             s_v = len(sample_v)
-            if  s_v == 0 or s_v == 1:
+            if s_v == 0 or s_v == 1:
                 return None
             i = random.sample(sample_v, 2)
             return [
@@ -103,7 +103,7 @@ class Slideshow:
             ]
 
     @staticmethod
-    def get_initial_state(top=None):
+    def get_initial_state(top=None, exactly=False):
         n_verticalp = Slideshow.v_photos_size
         n_horizontalp = Slideshow.h_photos_size
         n_max_slides = top
@@ -114,7 +114,7 @@ class Slideshow:
             else:
                 n_max_slides += (n_verticalp - 1) // 2
 
-        n_slides = random.randint(1, n_max_slides - 1)
+        n_slides = n_max_slides if exactly else random.randint(1, n_max_slides - 1)
 
         initial_solution = Slideshow([])
 
@@ -145,16 +145,19 @@ class Slideshow:
     @staticmethod
     def reproduce(S1, S2):
         slides_size1 = len(S1.slides)
-        slides_size2 = len(S1.slides)
-        # if slides_size1 != slides_size2:
+        slides_size2 = len(S2.slides)
+        if slides_size1 != slides_size2:
+            return Slideshow.spliceDif(S1, S2)
+        else:
+            return Slideshow.spliceEq(S1, S2)
 
     @staticmethod
-    def spliceDif(S1, S2, size1, size2):
-        minsize = min(size1, size2)
+    def spliceDif(S1, S2):
+        minsize = min(len(S1), len(S2))
         # A is the biggest chromossome, B is the smallest
         A = None
         B = None
-        if size1 == minsize:
+        if len(S1) == minsize:
             A = S2
             B = S1
         else:
@@ -188,7 +191,7 @@ class Slideshow:
         if scramble:
             C = []
             D = []
-            for i in enumerate(A.slides):
+            for i in range(len(A.slides)):
                 if i % 2 == 0:
                     C += ([B.slides[i], A.slides[i]]
                           if k else [A.slides[i], B.slides[i]])
