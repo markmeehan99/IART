@@ -50,4 +50,4 @@ if __name__ == "__main__":
     # s = Slideshow.get_initial_state(10,True)
     # newpop = geneticAlgorithm(pop, Slideshow.getScore)
     # print(sorted(list(map(Slideshow.getScore, newpop))))
-    sol = geneticAlgorithm(pop,Slideshow.getScore,)
+    # sol = geneticAlgorithm(pop,Slideshow.getScore,)
