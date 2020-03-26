@@ -255,7 +255,7 @@ class SearchTree:
                         continue
                     newnode = node.expand(f, False)
                     if newnode is None:
-                        pass
+                        continue
                     tabu[i] = tabuTernure[i]
                     if frequency:
                         newnodeEval = heuristic(
@@ -272,7 +272,7 @@ class SearchTree:
                         for i, f in enumerate(asps):
                             newnode = node.expand(f, False)
                             if newnode is None:
-                                pass
+                                continue
                             tabu[i] = tabuTernure[i]
                             if frequency:
                                 newnodeEval = heuristic(
@@ -301,7 +301,7 @@ class SearchTree:
         nodeEval = heuristic(self.root.value)
         T = init_T
         delta_e = nodeEval
-        while T != 0:
+        while round(T) != 0:
             nextnode = func[random.randint(0, len(func) - 1)](node.value)
             nextEval = heuristic(nextnode.value)
             delta_e = nextEval - nodeEval
@@ -310,6 +310,6 @@ class SearchTree:
             else:
                 if random.random() <= (1 / (1 + exp(-delta_e / T))):
                     node = nextnode
-            T = alpha * T
+            T = alpha(T)
         return node
 

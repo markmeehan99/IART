@@ -102,6 +102,7 @@ class Slideshow:
                 Slideshow.vertical_photos_pool[i[1]]
             ]
 
+
     @staticmethod
     def get_initial_state(top=None, exactly=False):
         n_verticalp = Slideshow.v_photos_size
