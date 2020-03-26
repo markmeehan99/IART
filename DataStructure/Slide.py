@@ -29,10 +29,10 @@ class Slide:
         return h
     
     def __repr__(self):
-        s = "[" + self.left_photo.__repr__()
+        s = "S<" + self.left_photo.__repr__()
         if self.isVertical():
             s += ", " + self.right_photo.__repr__()
-        return s + "]"
+        return s + ">"
 
     # Heuristics
     @staticmethod

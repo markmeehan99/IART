@@ -62,24 +62,24 @@ class Slideshow:
             self.missing_photo_ids.add(slide.right_photo.id)
         return True
 
-    @timecall
+
     def getScore(self):
         return self.score
 
-    @timecall
     def calcFullScore(self):
         n_slides = len(self.slides)
         self.score = 0
         j = -1
         for i in range(n_slides):
             if j == -1 or i == n_slides:
-                pass
+                j += 1
+                continue
             self.score += Slide.getScore(self.slides[j], self.slides[i])
             j += 1
         return self.score
 
     def __repr__(self):
-        return self.slides.__repr__()
+        return "SS" + self.slides.__repr__()
 
     def __len__(self):
         return len(self.slides)
@@ -114,7 +114,8 @@ class Slideshow:
             else:
                 n_max_slides += (n_verticalp - 1) // 2
 
-        n_slides = n_max_slides if exactly else random.randint(1, n_max_slides - 1)
+        n_slides = n_max_slides if exactly else random.randint(
+            1, n_max_slides - 1)
 
         initial_solution = Slideshow([])
 
@@ -181,7 +182,10 @@ class Slideshow:
         A2 = A.slides[k * minsize:]
         B1 = B.slides
 
-        return [A1 + B1, B1 + A2]
+        return [
+            Slideshow(Slideshow.RemDups(A1 + B1)),
+            Slideshow(Slideshow.RemDups(B1 + A2))
+        ]
 
     @staticmethod
     def spliceEq(A, B):
@@ -198,14 +202,35 @@ class Slideshow:
                 else:
                     D += ([B.slides[i], A.slides[i]]
                           if k else [A.slides[i], B.slides[i]])
-            return [C, D]
+            return [
+                Slideshow(Slideshow.RemDups(C)),
+                Slideshow(Slideshow.RemDups(D))
+            ]
         else:
             A1 = A.slides[:midpoint]
             A2 = A.slides[midpoint:]
             B1 = B.slides[:midpoint]
             B2 = B.slides[midpoint:]
-            return ([A1 + B2, B1 + A2] if k else [B2 + A2, B1 + A1])
+            return ([
+                Slideshow(Slideshow.RemDups(A1 + B2)),
+                Slideshow(Slideshow.RemDups(B1 + A2))
+            ] if k else [
+                Slideshow(Slideshow.RemDups(B2 + A2)),
+                Slideshow(Slideshow.RemDups(B1 + A1))
+            ])
 
     @staticmethod
     def RemDups(slideList):
-        return list(dict.fromkeys(slideList))
+        found = set()
+        result = []
+        for slide in slideList:
+            if slide.isVertical():
+                if slide.left_photo.id in found:
+                    continue
+                if slide.isVertical():
+                    if slide.right_photo.id in found:
+                        continue
+                    found.add(slide.right_photo.id)
+                found.add(slide.left_photo.id)
+                result.append(slide)
+        return result

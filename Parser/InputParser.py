@@ -10,6 +10,7 @@ def parse_input_file(file_name):
         id = 0
         for new_photo in input_file:
             [orientation, num_tags, tags] = new_photo.rstrip().split(" ", 2)
+            tags = tags.split(" ")
             if orientation == 'H':
                 Slideshow.horizontal_photos_pool[id] = Photo(
                     id, orientation, tags)
