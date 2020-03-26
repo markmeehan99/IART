@@ -2,7 +2,7 @@ from DataStructure import *
 from DataStructure.Photo import *
 from Parser.InputParser import *
 from profilehooks import timecall
-from SearchTreen import Node
+from SearchTree import Node
 from SearchTree.GeneticAlgorithm import geneticAlgorithm
 from SearchTree.GeneticAlgorithm import generateRandomPairs
 
@@ -11,7 +11,7 @@ from SearchTree.GeneticAlgorithm import generateRandomPairs
 def gen_N(N):
     s = []
     for i in range(N):
-        s.append(Slideshow.get_initial_state(2500,True))
+        s.append(Slideshow.get_initial_state(300,True))
         print(i)
     return s
 
@@ -46,12 +46,8 @@ if __name__ == "__main__":
 
 
     parse_input_file(sys.argv[1])
-    # pop = gen_N(30)
-    s = Slideshow.get_initial_state(10,True)
+    pop = gen_N(30)
+    # s = Slideshow.get_initial_state(10,True)
     # newpop = geneticAlgorithm(pop, Slideshow.getScore)
     # print(sorted(list(map(Slideshow.getScore, newpop))))
-    a = SearchTreen(s)
-    a.resetTree()
-    a.simulated_annealing([Slideshow.add_randslide], Slideshow.getScore, 16000,)
-    a.tabuSearch([f1, f2, f3, f4], Slideshow.getScore, [4, 7, 8, 9])
-
+    sol = geneticAlgorithm(pop,Slideshow.getScore,)

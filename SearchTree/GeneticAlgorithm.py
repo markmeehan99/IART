@@ -7,15 +7,17 @@ from profilehooks import timecall
 def geneticAlgorithm(initial_population, fitness, no_generations):
     population = initial_population
 
-    #Reproduction
+    for n in range(N):
+        # Reproduction
+        population = reproduction(population)
 
-    population = reproduction(population)
+        # Mutation
 
-    #Mutation
+        # Selection
+        scores = list(map(fitness, population))
+        population = selection(initial_population, scores)
 
-    #Selection
-    scores = list(map(fitness, population))
-    population = selection(initial_population, scores)
+    return max(population)
 
 
 def choice(objects, weights):
@@ -56,3 +58,8 @@ def generateRandomPairs(size):
             ids.remove(i)
         result.append(pair)
     return result
+
+
+def printGeneration(pop, scores, n):
+    print("Generation 1 :")
+    print("")
