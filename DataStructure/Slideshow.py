@@ -104,6 +104,17 @@ class Slideshow:
 
 
     @staticmethod
+    def add_horizontal(S):
+        p = S.get_randomPhoto("H", S.missing_photo_ids_h, S.missing_photo_ids_v)[0]
+        return S.add_slide(Slide(p[0]))
+
+    @staticmethod
+    def add_vertical(S):
+        p = S.get_randomPhoto("V", S.missing_photo_ids_h, S.missing_photo_ids_v)
+        return S.add_slide(Slide(p[0]), Slide(p[1]))
+
+
+    @staticmethod
     def get_initial_state(top=None, exactly=False):
         n_verticalp = Slideshow.v_photos_size
         n_horizontalp = Slideshow.h_photos_size
