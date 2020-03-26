@@ -113,7 +113,7 @@ class Slideshow:
     @staticmethod
     def add_vertical(S):
         p = S.get_randomPhoto("V", S.missing_photo_ids_h, S.missing_photo_ids_v)
-        return S.add_slide(Slide(p[0]), Slide(p[1]))
+        return S.add_slide(Slide(p[0], p[1]))
 
 
     @staticmethod
