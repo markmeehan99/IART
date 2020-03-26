@@ -62,9 +62,9 @@ class Slideshow:
             self.missing_photo_ids.add(slide.right_photo.id)
         return True
 
-
-    def getScore(self):
-        return self.score
+    @staticmethod
+    def getScore(S):
+        return S.calcFullScore()
 
     def calcFullScore(self):
         n_slides = len(self.slides)
