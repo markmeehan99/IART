@@ -6,6 +6,9 @@ from SearchTree.Node import *
 from SearchTree.GeneticAlgorithm import geneticAlgorithm
 from SearchTree.GeneticAlgorithm import generateRandomPairs
 
+import os.path
+from os import path
+
 
 @timecall
 def gen_N(N):
@@ -40,21 +43,199 @@ def test_nsplices(N):
         [s1, s2] = test_splice(s1, s2)
 
 
-if __name__ == "__main__":
-    original_vertical_photos = []
-    original_horizontal_photos = []
+
+def display_create_slideshow():
+    while(True):
+        file_path = input("|   Insert file's path ('q' to quit): ")
+
+        if file_path == 'q':
+            break
+        elif path.exists(file_path):
+            display_algorithm_options()
+        else: print("|-------- File does not exist ---------|")
+
+def display_algorithm_options():
+    while(True):
+        print("|------------- Algorithms -------------|")
+        print("|        1. Hill Climbing              |")
+        print("|        2. Tabu Search                |")
+        print("|        3. Simulated Annealing        |")
+        print("|        4. Genetic Algorithm          |")
+        print("|        5. Quit                       |")
+        print("")
+        
+        option = int(input("|   Select  "))
+
+        if option == 1:
+            hill_climbing_option()
+        elif option == 2:
+            tabu_search_option()
+        elif option == 3:
+            simulated_annealing_option()
+        elif option == 4:
+            genetic_algorithm_option()
+        else: print("-------- Select a valid option! --------")
 
 
-    parse_input_file(sys.argv[1])
-    #pop = gen_N(30)
-    s = Slideshow.get_initial_state(1000)
-    tree = SearchTree(Node(s))
+def get_csv_option(csv):
+    while True:
+        csv = input("|   Do you wish to save the development in csv format (yes/no): ")
+        if csv == "yes":
+            csv = True
+        if csv == "no":
+            csv = False
+        else:
+            print("------------ Invalid value -------------")
+            continue
+        break
 
-    operators = [Slideshow.add_horizontal, Slideshow.add_vertical, Slideshow.remove_smallest_transition,Slideshow.remove_random_slide ]
-    # tenure = [len(operators) for _ in range(len(operators))]
+def hill_climbing_option():
+    csv = False
+    get_csv_option(csv)
+
+    operators = [Slideshow.add_horizontal, Slideshow.add_vertical, 
+        Slideshow.remove_smallest_transition,Slideshow.remove_random_slide ]
+
+    slideshow = Slideshow.get_initial_state()
+
+  #  hillClimb(slideshow, operators, Slideshow.getScore, csv)
+
+    print("--------------- Finished ---------------")
+    print("Solution: " + print(slideshow))
+    print("Score: " + slideshow.getScore)
     
 
-    print(simulated_annealing(s,operators, Slideshow.getScore,10**5,0.1))
-    # newpop = geneticAlgorithm(pop, Slideshow.getScore)
-    # print(sorted(list(map(Slideshow.getScore, newpop))))
-    # sol = geneticAlgorithm(pop,Slideshow.getScore,)
+def tabu_search_option():
+    while True:
+        n_interations = input("|   Define stop criteria: number of iterations after the best score found (over 25 ; 'default' for 100): ")
+        if n_interations == "default":
+            n_interations = 100
+        else:
+            n_interations = int(n_interations)
+            if n_interations < 25:
+                print("------------ Invalid value -------------")
+                continue
+        break
+
+    csv = False
+    get_csv_option(csv)
+
+    operators = [Slideshow.add_horizontal, Slideshow.add_vertical, 
+        Slideshow.remove_smallest_transition, Slideshow.trade_random, Slideshow.trade_random]
+
+    slideshow = Slideshow.get_initial_state()
+
+    #tabu_search(slideshow, operators, Slideshow.getScore, n_interations, csv)
+
+    print("--------------- Finished ---------------")
+    print("Solution: " + print(slideshow))
+    print("Score: " + slideshow.getScore)
+
+
+def simulated_annealing_option():
+    while True:
+        init_T = input("|   Insert initial temperature (over 1000 | 'default' for default=1000000): ")
+        if init_T == "default":
+            init_T = 10**5
+        else:
+            init_T = int(init_T)
+            if init_T < 1000:
+                print("------------ Invalid value -------------")
+                continue
+        break
+        
+    while True:
+        alpha = input("|   Insert alpha (in ]0,1[ ; 'default' for 0.01): ")
+        if alpha == "default":
+            alpha = 0.01
+        else:
+            alpha = float(alpha)
+            if alpha <= 0 and alpha >= 1:
+                print("------------ Invalid value -------------")
+                continue
+        break
+
+    csv = False
+    get_csv_option(csv)
+    
+    operators = [Slideshow.add_horizontal, Slideshow.add_vertical, 
+        Slideshow.remove_smallest_transition, Slideshow.trade_random, Slideshow.trade_random]
+
+    slideshow = Slideshow.get_initial_state()
+
+    simulated_annealing(slideshow, operators, Slideshow.getScore, init_T, alpha, csv)
+
+    print("--------------- Finished ---------------")
+    print("Solution: " + print(slideshow))
+    print("Score: " + slideshow.getScore)
+
+
+def genetic_algorithm_option(): 
+    while True:
+        n_population = input("|   Insert number of initial population (in ]0,100] ; 'default' for 30): ")
+        if n_population == "default":
+            n_population = 30
+        else:
+            n_population = int(n_population)
+            if n_population <= 0 and n_population > 100:
+                print("------------ Invalid value -------------")
+                continue
+        break
+
+    while True:
+        n_generations = input("|   Insert number of generations (in ]0,100] ; 'default' for 30): ")
+        if n_generations == "default":
+            n_generations = 30
+        else:
+            n_generations = int(n_generations)
+            if n_generations <= 0 and n_generations > 100:
+                print("------------ Invalid value -------------")
+                continue
+        break
+
+    csv = False
+    get_csv_option(csv)
+
+    population = gen_N(n_population)
+
+    slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations, csv)
+
+    print("--------------- Finished ---------------")
+    print("Solution: " + print(slideshow))
+    print("Score: " + slideshow.getScore)
+
+
+if __name__ == "__main__":
+    print("========================================")
+    print("=========== Photo Slideshow ============")
+
+    while(True):
+        print("")
+        print("|         1. Create Slideshow          |")
+        print("|         2. Quit                      |")
+        print("")
+
+        option = input("|   Select ")
+
+        if option == "1":
+            display_create_slideshow()
+        elif option == "2":
+            print("")
+            print("=============== Goodbye ================")
+            print("")
+            exit(0)
+        else: print("-------- Select a valid option! --------")
+
+    # parse_input_file(sys.argv[1])
+    # #pop = gen_N(30)
+    # s = Slideshow.get_initial_state(1000)
+    # tree = SearchTree(Node(s))
+
+    # operators = [Slideshow.add_horizontal, Slideshow.add_vertical, Slideshow.remove_smallest_transition,Slideshow.remove_random_slide ]
+    # # tenure = [len(operators) for _ in range(len(operators))]
+    
+
+    # print(simulated_annealing(s,operators, Slideshow.getScore,10**5,0.1))
+    # # newpop = geneticAlgorithm(pop, Slideshow.getScore)
+    # # print(sorted(list(map(Slideshow.getScore, newpop))))
+    # # sol = geneticAlgorithm(pop,Slideshow.getScore,)
