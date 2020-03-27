@@ -124,7 +124,7 @@ class Slideshow:
         S = deepcopy(Soriginal)
 
         p = S.get_randomPhoto('H', S.missing_photo_ids_h, None)
-        if len(p) < 1:
+        if p == None or len(p) < 1:
             return None
         return S if S.add_slide(Slide(p[0])) else None
 
@@ -180,8 +180,9 @@ class Slideshow:
 
         return S
         
-
+    
     @staticmethod
+    @timecall
     def get_initial_state(top=None, exactly=False):
         n_verticalp = Slideshow.v_photos_size
         n_horizontalp = Slideshow.h_photos_size

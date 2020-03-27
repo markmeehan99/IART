@@ -205,27 +205,6 @@ class SearchTree:
                             return newnode
 
     @timecall
-    def hillClimb(self, func, heuristic):
-        if isinstance(func, list):
-            node = self.root
-            nodeEval = heuristic(node.value)
-            while True:
-                nextnode = None
-                nextnodeEval = -inf
-                for f in func:
-                    newnode = node.expand(f)
-                    if newnode is not None:
-                        newnodeEval = heuristic(newnode.value)
-                        if newnodeEval > nextnodeEval:
-                            nextnode = newnode
-                            nextnodeEval = newnodeEval
-                if nodeEval >= nextnodeEval:
-                    return node
-                node = nextnode
-                nodeEval = nextnodeEval
-                print(nodeEval)
-
-    @timecall
     def tabuSearch(self,
                    func,
                    heuristic,
@@ -242,6 +221,7 @@ class SearchTree:
             freq = [0 for _ in func]
             node = self.root
             nodeEval = heuristic(node.value)
+            print(nodeEval)
             max_iter = n_iter
             while max_iter != 0:
                 nextnode = None
@@ -254,8 +234,9 @@ class SearchTree:
                             asps.append(f)
                         tabu[i] -= 1
                         continue
-                    newnode = node.expand(f, False)
+                    newnode = node.expand(f, addchildren=False)
                     if newnode is None:
+                        print(f)
                         continue
                     tabu[i] = tabuTernure[i]
                     if frequency:
@@ -286,6 +267,7 @@ class SearchTree:
                                 if frequency:
                                     nextnodeIndex = i
                     if nextnode is None:
+                        print("rip")
                         return node
                 if nodeEval >= nextnodeEval:
                     max_iter -= 1
@@ -294,23 +276,59 @@ class SearchTree:
                     if frequency:
                         freq[nextnodeIndex] += 1
 
-    @timecall
-    def simulated_annealing(self, func, heuristic, init_T, alpha):
-        if len(func) == 0:
-            return
-        node = self.root
-        nodeEval = heuristic(self.root.value)
-        T = init_T
-        delta_e = nodeEval
-        while round(T) != 0:
-            nextnode = func[random.randint(0, len(func) - 1)](node.value)
-            nextEval = heuristic(nextnode.value)
-            delta_e = nextEval - nodeEval
-            if delta_e > 0:
-                node = nextnode
-            else:
-                if random.random() <= (1 / (1 + exp(-delta_e / T))):
-                    node = nextnode
-            T = alpha(T)
-        return node
 
+@timecall
+def simulated_annealing(init, func, heuristic, init_T, alpha):
+    step = 0
+    if len(func) == 0:
+        return
+    node = init
+    nodeEval = heuristic(init)
+    bestNode = node
+    bestEval = nodeEval
+    T = init_T
+    delta_e = nodeEval
+    while round(T) != 0:
+        nextnode = None
+        while nextnode is None:
+            nextnode = func[random.randint(0, len(func) - 1)](node)
+        nextEval = heuristic(nextnode)
+        delta_e = nextEval - nodeEval
+        if delta_e > 0:
+            node = nextnode
+            nodeEval = nextEval
+        else:
+            if random.random() <= (1 / (1 + exp(-delta_e / T))):
+                node = nextnode
+                nodeEval = nextEval
+        if nodeEval >= bestEval:
+            bestNode = node
+            bestEval = nodeEval
+        T += -alpha * T
+        print(step, ",", nextEval)
+        step += 1
+    return node
+
+
+@timecall
+def hillClimb(init_sol, func, heuristic):
+    if isinstance(func, list):
+        node = init_sol
+        nodeEval = heuristic(init_sol)
+        while True:
+            nextnode = None
+            nextnodeEval = -inf
+            nextnodefunc = None
+            for f in func:
+                newnode = f(node)
+                if newnode is not None:
+                    newnodeEval = heuristic(newnode)
+                    if newnodeEval > nextnodeEval:
+                        nextnode = newnode
+                        nextnodeEval = newnodeEval
+                        nextnodefunc = f
+            if nodeEval >= nextnodeEval:
+                return node
+            node = nextnode
+            nodeEval = nextnodeEval
+            print(nextnodefunc, nodeEval)
