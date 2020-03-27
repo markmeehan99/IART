@@ -13,12 +13,12 @@ def parse_input_file(file_name):
             tags = tags.split(" ")
             if orientation == 'H':
                 Slideshow.horizontal_photos_pool[id] = Photo(
-                    id, orientation, tags)
+                    id, orientation, set(tags))
                 Slideshow.h_photos_size += 1
                 Slideshow.all_ids_set_h.add(id)
             elif orientation == 'V':
                 Slideshow.vertical_photos_pool[id] = Photo(
-                    id, orientation, tags)
+                    id, orientation, set(tags))
                 Slideshow.v_photos_size += 1
                 Slideshow.all_ids_set_v.add(id)
             id += 1

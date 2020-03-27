@@ -305,9 +305,9 @@ def simulated_annealing(init, func, heuristic, init_T, alpha):
             bestNode = node
             bestEval = nodeEval
         T += -alpha * T
-        print(step, ",", nextEval)
+        print(step, ",", nextEval, ",", T)
         step += 1
-    return node
+    return bestNode
 
 
 @timecall
@@ -332,3 +332,49 @@ def hillClimb(init_sol, func, heuristic):
             node = nextnode
             nodeEval = nextnodeEval
             print(nextnodefunc, nodeEval)
+
+
+@timecall
+def tabuSearch(init_sol, funcs, heuristic, iter_between_improvements=100):
+    tabu = [0 for _ in range(len(funcs))]
+    tabuTernure = len(funcs) - 2 
+    nextnode = init_sol
+    nextnodeEval = heuristic(nextnode)
+    bestNode = nextnode
+    bestNodeEval = nextnodeEval
+    iter_bet = 0
+    while iter_bet <= iter_between_improvements:
+        # Find max allowed Neighbour
+        maxNeighbour = None
+        maxNeighbourEval = -inf
+        indexToTabu = -1
+        for i, f in enumerate(funcs):
+            if tabu[i] > 0:
+                tabu[i] -= 1
+                continue
+            neighbour = f(nextnode)
+            if neighbour == None:
+                continue
+            neighbourEval = heuristic(neighbour)
+            if maxNeighbour is None or neighbourEval > maxNeighbourEval:
+                maxNeighbour = neighbour
+                maxNeighbourEval = neighbourEval
+                indexToTabu = i
+        # Forbid neighbour for n iterations
+        tabu[indexToTabu] = tabuTernure
+        nextnode = maxNeighbour
+        nextnodeEval = maxNeighbourEval
+        # Update best node
+        iter_bet += 1
+        if nextnodeEval > bestNodeEval:
+            bestNode = nextnode
+            bestNodeEval = nextnodeEval
+            iter_bet = 0
+        print("-------------------------------")
+        print("Iter since best update: ", iter_bet)
+        print("Best score : ", bestNodeEval)
+        print("Node Score : ", nextnodeEval)
+        print("Function name : ", funcs[indexToTabu].__name__)
+        print("-------------------------------")
+    return bestNode
+

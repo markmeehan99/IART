@@ -115,12 +115,14 @@ class Slideshow:
             if slides[i].orientation == orientation:
                 indexes.append(i)
         return indexes
-    
+
     #----------------------OPERATORS---------------------#
 
     #add operators
     @staticmethod
     def add_horizontal(Soriginal):
+        if len(Soriginal.missing_photo_ids_h) == 0:
+            return None
         S = deepcopy(Soriginal)
 
         p = S.get_randomPhoto('H', S.missing_photo_ids_h, None)
@@ -130,6 +132,8 @@ class Slideshow:
 
     @staticmethod
     def add_vertical(Soriginal):
+        if len(Soriginal.missing_photo_ids_v) == 0:
+            return None
         S = deepcopy(Soriginal)
 
         p = S.get_randomPhoto('V', None, S.missing_photo_ids_v)
@@ -145,6 +149,8 @@ class Slideshow:
 
         i=0
         n_slide = len(S.slides)
+        if n_slide < 2:
+            return None
         for i in range(n_slide):
             if i == 0 and Slide.getScore(S.slides[0], S.slides[1]) == 0:
                 result = 0
@@ -159,7 +165,7 @@ class Slideshow:
                     result = i
 
         return S if S.remove_slide(S.slides[i]) else None
-    
+
     @staticmethod
     def remove_random_slide(Soriginal):
         S = deepcopy(Soriginal)
@@ -167,7 +173,7 @@ class Slideshow:
         i = random.sample(S.slides, 1)[0]
         return S if S.remove_slide(i) else None
 
-    #trade operators 
+    #trade operators
     @staticmethod
     def trade_random(Soriginal):
         S = deepcopy(Soriginal)
@@ -179,8 +185,13 @@ class Slideshow:
         S.slides[i1] = slide_aux
 
         return S
-        
-    
+
+    @staticmethod
+    def shuffle(Soriginal):
+        S = deepcopy(Soriginal)
+        random.shuffle(S.slides)
+        return S
+
     @staticmethod
     @timecall
     def get_initial_state(top=None, exactly=False):

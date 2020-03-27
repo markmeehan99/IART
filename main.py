@@ -11,7 +11,7 @@ from SearchTree.GeneticAlgorithm import generateRandomPairs
 def gen_N(N):
     s = []
     for i in range(N):
-        s.append(Slideshow.get_initial_state(300,True))
+        s.append(Slideshow.get_initial_state(300, True))
         print(i)
     return s
 
@@ -44,17 +44,23 @@ if __name__ == "__main__":
     original_vertical_photos = []
     original_horizontal_photos = []
 
-
     parse_input_file(sys.argv[1])
     #pop = gen_N(30)
-    s = Slideshow.get_initial_state(1000)
+    s = Slideshow.get_initial_state(10000, True)
     tree = SearchTree(Node(s))
 
-    operators = [Slideshow.add_horizontal, Slideshow.add_vertical, Slideshow.remove_smallest_transition,Slideshow.remove_random_slide ]
-    # tenure = [len(operators) for _ in range(len(operators))]
-    
+    operators = [
+        Slideshow.add_horizontal,
+        Slideshow.add_vertical,
+        Slideshow.add_vertical,
+        Slideshow.remove_smallest_transition, Slideshow.remove_random_slide,
+        Slideshow.trade_random,
+        Slideshow.shuffle
+    ]
 
-    print(simulated_annealing(s,operators, Slideshow.getScore,10**5,0.1))
+    # print(simulated_annealing(s, operators, Slideshow.getScore, 10**5, 0.01))
+    # hillClimb(s,operators,Slideshow.getScore)
+    tabuSearch(s,operators,Slideshow.getScore)
     # newpop = geneticAlgorithm(pop, Slideshow.getScore)
     # print(sorted(list(map(Slideshow.getScore, newpop))))
     # sol = geneticAlgorithm(pop,Slideshow.getScore,)

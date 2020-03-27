@@ -3,12 +3,11 @@ class Slide:
         self.orientation = 'H'
         self.left_photo = left_photo
         self.right_photo = right_photo
+        self.tags = left_photo.tags
 
         if right_photo is not None:
-            self.tags = set(self.left_photo.tags) | set(self.right_photo.tags)
+            self.tags |= self.right_photo.tags
             self.orientation = 'V'
-        else:
-            self.tags = set(left_photo.tags)
 
     def isVertical(self):
         return self.right_photo is not None
@@ -28,7 +27,7 @@ class Slide:
         if self.isVertical():
             h += hash(self.right_photo)
         return h
-    
+
     def __repr__(self):
         s = "S<" + self.left_photo.__repr__()
         if self.isVertical():
