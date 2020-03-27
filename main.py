@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     parse_input_file(sys.argv[1])
     #pop = gen_N(30)
-    s = Slideshow.get_initial_state(10000, True)
+    s = Slideshow.get_initial_state()
     tree = SearchTree(Node(s))
 
     operators = [
@@ -57,10 +57,10 @@ if __name__ == "__main__":
         Slideshow.trade_random,
         Slideshow.shuffle
     ]
-
+     
     # print(simulated_annealing(s, operators, Slideshow.getScore, 10**5, 0.01))
     # hillClimb(s,operators,Slideshow.getScore)
-    tabuSearch(s,operators,Slideshow.getScore)
+    tabuSearch(s,operators,Slideshow.getScore,to_csv=True)
     # newpop = geneticAlgorithm(pop, Slideshow.getScore)
     # print(sorted(list(map(Slideshow.getScore, newpop))))
     # sol = geneticAlgorithm(pop,Slideshow.getScore,)

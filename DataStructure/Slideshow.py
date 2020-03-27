@@ -48,7 +48,6 @@ class Slideshow:
             self.missing_photo_ids_h.discard(slide.left_photo.id)
         return True
 
-
     def remove_slide(self, slide):
         if slide.left_photo.id not in self.current_photo_ids:
             return False
@@ -110,7 +109,7 @@ class Slideshow:
     def get_slides_byOrientation(orientation, slides):
         indexes = []
         n_slides = len(slides)
-        i=0
+        i = 0
         for i in range(n_slides):
             if slides[i].orientation == orientation:
                 indexes.append(i)
@@ -147,19 +146,22 @@ class Slideshow:
         S = deepcopy(Soriginal)
         result = None
 
-        i=0
+        i = 0
         n_slide = len(S.slides)
         if n_slide < 2:
             return None
         for i in range(n_slide):
             if i == 0 and Slide.getScore(S.slides[0], S.slides[1]) == 0:
                 result = 0
-            elif result == None and i == n_slide-1 and Slide.getScore(S.slides[i-1], S.slides[i]) == 0:
+            elif result == None and i == n_slide - 1 and Slide.getScore(
+                    S.slides[i - 1], S.slides[i]) == 0:
                 result = i
-            elif i > 0 and i < n_slide-1:
-                previous_transition = Slide.getScore(S.slides[i-1], S.slides[i])
-                next_transition = Slide.getScore(S.slides[i], S.slides[i+1])
-                new_transition = Slide.getScore(S.slides[i-1], S.slides[i+1])
+            elif i > 0 and i < n_slide - 1:
+                previous_transition = Slide.getScore(S.slides[i - 1],
+                                                     S.slides[i])
+                next_transition = Slide.getScore(S.slides[i], S.slides[i + 1])
+                new_transition = Slide.getScore(S.slides[i - 1],
+                                                S.slides[i + 1])
                 total = new_transition - previous_transition - next_transition
                 if total > 0:
                     result = i
@@ -178,7 +180,7 @@ class Slideshow:
     def trade_random(Soriginal):
         S = deepcopy(Soriginal)
         indexes = [x for x in range(len(S.slides))]
-        [i1,i2] = random.sample(indexes, 2)
+        [i1, i2] = random.sample(indexes, 2)
         slide_aux = S.slides[i2]
 
         S.slides[i2] = S.slides[i1]
@@ -325,3 +327,8 @@ class Slideshow:
                 found.add(slide.left_photo.id)
                 result.append(slide)
         return result
+
+    def plusInfo(self):
+        return "Number of photos: " + str(len(
+            self.current_photo_ids)) + "\n" + "Number of slides: " + str(
+                len(self.slides))

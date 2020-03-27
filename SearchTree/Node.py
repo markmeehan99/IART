@@ -335,13 +335,21 @@ def hillClimb(init_sol, func, heuristic):
 
 
 @timecall
-def tabuSearch(init_sol, funcs, heuristic, iter_between_improvements=100):
+def tabuSearch(init_sol,
+               funcs,
+               heuristic,
+               iter_between_improvements=200,
+               to_csv=False):
     tabu = [0 for _ in range(len(funcs))]
-    tabuTernure = len(funcs) - 2 
+    tabuTernure = len(funcs) - 2
     nextnode = init_sol
     nextnodeEval = heuristic(nextnode)
     bestNode = nextnode
     bestNodeEval = nextnodeEval
+    file = None
+    iteration = 0
+    if to_csv:
+        file = open("tabuSearch.csv", "w")
     iter_bet = 0
     while iter_bet <= iter_between_improvements:
         # Find max allowed Neighbour
@@ -353,7 +361,7 @@ def tabuSearch(init_sol, funcs, heuristic, iter_between_improvements=100):
                 tabu[i] -= 1
                 continue
             neighbour = f(nextnode)
-            if neighbour == None:
+            if neighbour is None:
                 continue
             neighbourEval = heuristic(neighbour)
             if maxNeighbour is None or neighbourEval > maxNeighbourEval:
@@ -370,11 +378,19 @@ def tabuSearch(init_sol, funcs, heuristic, iter_between_improvements=100):
             bestNode = nextnode
             bestNodeEval = nextnodeEval
             iter_bet = 0
+            if to_csv:
+                s = str(iteration) + "," + str(bestNodeEval) + "\n"
+                file.write(s)
         print("-------------------------------")
-        print("Iter since best update: ", iter_bet)
+        print("Iter since best solution update: ", iter_bet)
         print("Best score : ", bestNodeEval)
+        pl = getattr(bestNode, "plusInfo", None)
+        if callable(pl):
+            print(bestNode.plusInfo())
         print("Node Score : ", nextnodeEval)
         print("Function name : ", funcs[indexToTabu].__name__)
         print("-------------------------------")
+        iteration += 1
+    if to_csv:
+        file.close() if file is not None else file
     return bestNode
-
