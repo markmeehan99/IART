@@ -37,7 +37,7 @@ class Slide:
     # Heuristics
     @staticmethod
     def getCommonTagsCount(prevSlide, nextSlide):
-        return len(prevSlide.tags.intersection(nextSlide.tags))
+        return len(prevSlide.tags & nextSlide.tags)
 
     @staticmethod
     def getUniqueTags(prevSlide, nextSlide):

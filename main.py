@@ -2,9 +2,9 @@ from DataStructure import *
 from DataStructure.Photo import *
 from Parser.InputParser import *
 from profilehooks import timecall
-from SearchTree.Node import *
 from SearchTree.GeneticAlgorithm import geneticAlgorithm
 from SearchTree.GeneticAlgorithm import generateRandomPairs
+from SearchTree.Node import * 
 
 
 @timecall
@@ -46,8 +46,7 @@ if __name__ == "__main__":
 
     parse_input_file(sys.argv[1])
     #pop = gen_N(30)
-    s = Slideshow.get_initial_state(10,True)
-    tree = SearchTree(Node(s))
+    s = Slideshow.get_initial_state()
 
     operators = [
         Slideshow.add_horizontal,
@@ -55,16 +54,19 @@ if __name__ == "__main__":
         Slideshow.add_horizontal,
         Slideshow.add_vertical,
         # Slideshow.add_vertical,
-        # Slideshow.remove_smallest_transition,
-        # Slideshow.remove_random_slide,
-        # Slideshow.trade_random,
-        # Slideshow.shuffle
+        Slideshow.remove_smallest_transition,
+        Slideshow.remove_random_slide,
+        Slideshow.remove_random_slide,
+        Slideshow.trade_random,
+        Slideshow.trade_random,
+        Slideshow.trade_random,
+        Slideshow.shuffle
     ]
-     
+    i = 1000
     # print(simulated_annealing(s, operators, Slideshow.getScore, 10**5, 0.01))
     # hillClimb(s,operators,Slideshow.getScore)
-    tabuSearch(s,operators,Slideshow.getScore,to_csv=True,iter_between_improvements=1000)
-    # hillClimb(s,operators,Slideshow.getScore)
+    tabuSearch(s,operators,Slideshow.getScore,to_csv=True,iter_between_improvements=200,iter_max=i)
+    hillClimb(s,operators,Slideshow.getScore,to_csv=True,iter_max=i)
     # newpop = geneticAlgorithm(pop, Slideshow.getScore)
     # print(sorted(list(map(Slideshow.getScore, newpop))))
     # sol = geneticAlgorithm(pop,Slideshow.getScore,)

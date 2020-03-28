@@ -7,7 +7,7 @@ from profilehooks import timecall
 def geneticAlgorithm(initial_population, fitness, no_generations):
     population = initial_population
 
-    for n in range(N):
+    for n in range(no_generations):
         # Reproduction
         population = reproduction(population)
 

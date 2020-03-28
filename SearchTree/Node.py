@@ -42,8 +42,12 @@ def simulated_annealing(init, func, heuristic, init_T, alpha):
 
 
 @timecall
-def hillClimb(init_sol, func, heuristic):
+def hillClimb(init_sol, func, heuristic, to_csv=False, iter_max=-1):
     if isinstance(func, list):
+        iteration = 0
+        file = None
+        if to_csv:
+            file = open("hillClimb.csv", "w")
         node = init_sol
         nodeEval = heuristic(init_sol)
         while True:
@@ -58,11 +62,26 @@ def hillClimb(init_sol, func, heuristic):
                         nextnode = newnode
                         nextnodeEval = newnodeEval
                         nextnodefunc = f.__name__
-            if nodeEval >= nextnodeEval:
+            if nodeEval >= nextnodeEval or iter_max == iteration:
+                if to_csv:
+                    file.close() if file is not None else file
                 return node
             node = nextnode
             nodeEval = nextnodeEval
-            print(nextnodefunc, nodeEval)
+            print("-------------------------------")
+            print("Function name : ", nextnodefunc)
+            print("Node Score : ", nodeEval)
+            pl = getattr(node, "plusInfo", None)
+            if callable(pl):
+                print(node.plusInfo())
+            print("-------------------------------")
+            if to_csv:
+                s = str(iteration) + "," +  str(nodeEval) + "\n"
+                file.write(s)
+            iteration += 1
+        if to_csv:
+            file.close() if file is not None else file
+        return node
 
 
 @timecall
@@ -70,7 +89,8 @@ def tabuSearch(init_sol,
                funcs,
                heuristic,
                iter_between_improvements=200,
-               to_csv=False):
+               to_csv=False,
+               iter_max=-1):
     tabu = [0 for _ in range(len(funcs))]
     tabuTernure = len(funcs) - 2
     nextnode = init_sol
@@ -82,7 +102,7 @@ def tabuSearch(init_sol,
     if to_csv:
         file = open("tabuSearch.csv", "w")
     iter_bet = 0
-    while iter_bet <= iter_between_improvements:
+    while iter_bet <= iter_between_improvements and iter_max != iteration:
         # Find max allowed Neighbour
         maxNeighbour = None
         maxNeighbourEval = -inf
@@ -109,9 +129,9 @@ def tabuSearch(init_sol,
             bestNode = nextnode
             bestNodeEval = nextnodeEval
             iter_bet = 0
-            if to_csv:
-                s = str(iteration) + "," + str(bestNodeEval) + "\n"
-                file.write(s)
+        if to_csv:
+            s = str(iteration) + "," + str(bestNodeEval) + "\n"
+            file.write(s)
         print("-------------------------------")
         print("Iter since best solution update: ", iter_bet)
         print("Best score : ", bestNodeEval)
