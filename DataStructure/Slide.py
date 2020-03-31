@@ -40,15 +40,26 @@ class Slide:
             s += ", " + self.right_photo.__repr__()
         return s + ">"
 
+    
     # Heuristics
+
+    # Returns the count of common tags between two Slides
+    # @attribute prevSlide: previous Slide
+    # @attribute nextSlide: next Slide
     @staticmethod
     def getCommonTagsCount(prevSlide, nextSlide):
         return len(prevSlide.tags & nextSlide.tags)
 
+    # Returns the unique tags between two Slides
+    # @attribute prevSlide: previous Slide
+    # @attribute nextSlide: next Slide
     @staticmethod
     def getUniqueTags(prevSlide, nextSlide):
         return len(prevSlide.tags - nextSlide.tags)
 
+    # Returns the Score of two Slides
+    # @attribute prevSlide: previous Slide
+    # @attribute nextSlide: next Slide
     @staticmethod
     def getScore(prevSlide, nextSlide):
         h1 = Slide.getCommonTagsCount(prevSlide, nextSlide)
