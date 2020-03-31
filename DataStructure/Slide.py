@@ -12,6 +12,12 @@ class Slide:
     def isVertical(self):
         return self.right_photo is not None
 
+    def update_tags(self):
+        self.tags = self.left_photo.tags
+
+        if self.right_photo is not None:
+            self.tags |= self.right_photo.tags
+
     def __eq__(self, value):
         if self.orientation != value.orientation:
             return False

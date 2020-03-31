@@ -4,17 +4,17 @@ from Parser.InputParser import *
 from profilehooks import timecall
 from SearchTree.GeneticAlgorithm import geneticAlgorithm
 from SearchTree.GeneticAlgorithm import generateRandomPairs
-from SearchTree.Node import * 
+from SearchTree.Node import *
 
 import os.path
 from os import path
 
 
 @timecall
-def gen_N(N):
+def gen_N(N,size=2000):
     s = []
     for i in range(N):
-        s.append(Slideshow.get_initial_state(300, True))
+        s.append(Slideshow.get_initial_state(size,True))
         print(i)
     return s
 
@@ -43,9 +43,8 @@ def test_nsplices(N):
         [s1, s2] = test_splice(s1, s2)
 
 
-
 def display_algorithm_options():
-    while(True):
+    while (True):
         print("")
         print("|------------- Algorithms -------------|")
         print("|        1. Hill Climbing              |")
@@ -54,7 +53,7 @@ def display_algorithm_options():
         print("|        4. Genetic Algorithm          |")
         print("|        5. Quit                       |")
         print("")
-        
+
         option = input("|   Select  ")
 
         if option == "1":
@@ -67,7 +66,9 @@ def display_algorithm_options():
             genetic_algorithm_option()
         elif option == "5":
             return
-        else: print("-------- Select a valid option! --------")
+        else:
+            print("-------- Select a valid option! --------")
+
 
 def get_iter_max():
     while True:
@@ -93,9 +94,11 @@ def initial_state_size():
                 continue
         return size
 
+
 def get_csv_option():
     while True:
-        csv = input("|   Do you wish to save the development in csv format (y/n): ")
+        csv = input(
+            "|   Do you wish to save the development in csv format (y/n): ")
 
         if csv == "y":
             csv = True
@@ -134,17 +137,11 @@ def hill_climbing_option():
     slideshow = Slideshow.get_initial_state(size, exactly)
 
     operators = [
-        Slideshow.add_horizontal,
-        Slideshow.add_vertical,
-        Slideshow.add_horizontal,
-        Slideshow.add_vertical,
-        Slideshow.remove_smallest_transition,
-        Slideshow.remove_random_slide,
-        Slideshow.remove_random_slide,
-        Slideshow.trade_random,
-        Slideshow.trade_random,
-        Slideshow.trade_random,
-        Slideshow.shuffle
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.remove_smallest_transition, Slideshow.remove_random_slide,
+        Slideshow.remove_random_slide, Slideshow.trade_random,
+        Slideshow.trade_random, Slideshow.trade_random, Slideshow.shuffle
     ]
 
     slideshow = hillClimb(slideshow, operators, Slideshow.getScore, csv, iter_max)
@@ -174,19 +171,13 @@ def tabu_search_option():
     slideshow = Slideshow.get_initial_state(size, exactly)
 
     operators = [
-        Slideshow.add_horizontal,
-        Slideshow.add_vertical,
-        Slideshow.add_horizontal,
-        Slideshow.add_vertical,
-        Slideshow.remove_smallest_transition,
-        Slideshow.remove_random_slide,
-        Slideshow.remove_random_slide,
-        Slideshow.trade_random,
-        Slideshow.trade_random,
-        Slideshow.trade_random,
-        Slideshow.shuffle
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.remove_smallest_transition, Slideshow.remove_random_slide,
+        Slideshow.remove_random_slide, Slideshow.trade_random,
+        Slideshow.trade_random, Slideshow.trade_random, Slideshow.shuffle
     ]
-    
+
     slideshow = tabuSearch(slideshow, operators, Slideshow.getScore, n_iterations, csv, iter_max)
 
     finish(slideshow, "tabusearch")
@@ -203,7 +194,7 @@ def simulated_annealing_option():
                 print("------------ Invalid value -------------")
                 continue
         break
-        
+
     while True:
         alpha = input("|   Insert alpha (in ]0,1[ ; 'default' for 0.01): ")
         if alpha == "default" or alpha == '':
@@ -221,12 +212,10 @@ def simulated_annealing_option():
 
     exactly = True if size != None else False
     slideshow = Slideshow.get_initial_state(size, exactly)
-    
+
     operators = [
-        Slideshow.add_horizontal, 
-        Slideshow.add_vertical, 
-        Slideshow.remove_smallest_transition, 
-        Slideshow.trade_random, 
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.remove_smallest_transition, Slideshow.trade_random,
         Slideshow.trade_random
     ]
 
@@ -235,7 +224,7 @@ def simulated_annealing_option():
     finish(slideshow, "simulatedannealing")
 
 
-def genetic_algorithm_option(): 
+def genetic_algorithm_option():
     while True:
         n_population = input("|   Insert number of initial population (in ]0,100] ; 'default' for 30): ")
         if n_population == "default" or n_population == '':
@@ -260,7 +249,7 @@ def genetic_algorithm_option():
 
     while True:
         n_generations = input("|   Insert number of generations (in ]0,100] ; 'default' for 30): ")
-        if n_generations == "default" or n_population == '':
+        if n_generations == "default" or n_generations == '':
             n_generations = 30
         else:
             n_generations = int(n_generations)
@@ -296,13 +285,19 @@ def genetic_algorithm_option():
 
     population = gen_N(n_population)
 
-    slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations, csv)
+    operators = [
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.remove_smallest_transition, Slideshow.trade_random,
+        Slideshow.trade_random
+    ]
+
+    slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations,mutations=operators,to_csv=csv)
 
     finish(slideshow, "geneticalgorithm")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2 :
+    if len(sys.argv) != 2:
         print("Error in call. Usage: python3 main <file_path>")
         exit(-1)
 
@@ -311,7 +306,7 @@ if __name__ == "__main__":
     print("========================================")
     print("=========== Photo Slideshow ============")
 
-    while(True):
+    while (True):
         print("")
         print("|         1. Create Slideshow          |")
         print("|         2. Quit                      |")
@@ -326,4 +321,5 @@ if __name__ == "__main__":
             print("=============== Goodbye ================")
             print("")
             exit(0)
-        else: print("-------- Select a valid option! --------")
+        else:
+            print("-------- Select a valid option! --------")

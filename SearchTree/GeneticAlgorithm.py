@@ -4,19 +4,37 @@ from copy import deepcopy
 from profilehooks import timecall
 
 
-def geneticAlgorithm(initial_population, fitness, no_generations):
+def geneticAlgorithm(initial_population,
+                     fitness,
+                     no_generations,
+                     mutations=None,
+                     mutate_chance=0.05,
+                     to_csv=False):
     population = initial_population
+    file = None
+    if to_csv:
+        file = open("Genetic_algorithm.csv", "w")
+        file.write("Generation,Min,Max,Average\n")
 
     for n in range(no_generations):
         # Reproduction
         population = reproduction(population)
 
         # Mutation
-
+        if mutations is not None:
+            if isinstance(mutations, list):
+                for j in range(len(population)):
+                    x = random.random()
+                    if x < mutate_chance:
+                        mutation = random.choice(mutations)
+                        print("Mutation on " + str(j) + " " + mutation.__name__)
+                        population[j] = mutation(population[j])
         # Selection
         scores = list(map(fitness, population))
-        population = selection(initial_population, scores)
-
+        population = selection(population, scores)
+        printGeneration(population, scores, n, file)
+    if file is not None:
+        file.close()
     return max(population)
 
 
@@ -31,35 +49,86 @@ def choice(objects, weights):
             return deepcopy(objects[i])
 
 
+def choiceByCombat(population, fitness, N=None):
+    pop_size = len(population) if N is None else N
+
+    [f1, f2] = [random.choice(population), random.choice(population)]
+
+    return deepcopy(f1 if fitness(f1) >= fitness(f2) else f2)
+
+
 @timecall
-def selection(population, fitnesses, N):
+def selection(population, fitness, N=None):
     if N is None:
         N = len(population)
-    return [choice(population, fitnesses) for x in range(N)]
+    return [choice(population, fitness) for x in range(N)]
 
 
 @timecall
-def reproduction(population):
-    pairs = generateRandomPairs(len(population))
+def reproduction(population, elitism=False):
+    if elitism:
+        pairs = generateElitPairsExtreme(population)
+    else:
+        pairs = generateRandomPairs(population)
     result = []
     for i in pairs:
         p1 = population[i[0]]
         p2 = population[i[1]]
-        result.append(p1.reproduce(p1, p2))
+        sons = p1.reproduce(p1, p2)
+        son = max(sons)
+        result.append(son)
     return result
 
 
-def generateRandomPairs(size):
-    ids = set([x for x in range(size)])
+def generateRandomPairs(population):
+    k = len(population)
+    ids = set([x for x in range(k)])
     result = []
-    while len(ids) != 0:
+    while k != 0:
         pair = random.sample(ids, 2)
-        for i in pair:
-            ids.remove(i)
         result.append(pair)
+        k -= 1
     return result
 
 
-def printGeneration(pop, scores, n):
-    print("Generation 1 :")
-    print("")
+def generateElitPairs(population):
+    p = sorted(population)
+    k = len(population)
+    result = []
+    while k != 0:
+        best_parent = random.randint(k // 2, k - 1)
+        worst_parent = random.randint(0, k - 1)
+        result.append([best_parent, worst_parent])
+        k -= 1
+    return result
+
+
+def generateElitPairsExtreme(population):
+    p = sorted(population)
+    k = len(population)
+    result = []
+    bests_parents = p[k // 2:k - 1]
+    b_size = len(bests_parents)
+    i = 0
+    while k != 0:
+        best_parent = i
+        worst_parent = random.randint(0, k - 1)
+        result.append([best_parent, worst_parent])
+        i = (i + 1) % b_size
+        k -= 1
+    return result
+
+
+def printGeneration(pop, scores, n, file):
+    minp = min(scores)
+    maxp = max(scores)
+    avg = round(sum(scores) / len(scores))
+    print("Generation " + str(n) + ":")
+    print("Scores: " + str(sorted(scores)))
+    print("Min : " + str(minp))
+    print("Max : " + str(maxp))
+    print("Avg : " + str(avg))
+    if file is not None:
+        s = str(n) + "," + str(minp) + "," + str(maxp) + "," + str(avg) + "\n"
+        file.write(s)
+
