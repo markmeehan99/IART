@@ -261,6 +261,7 @@ class Slideshow:
                         break
         return initial_solution
 
+    # Given two slideshows chooses between splice for parents with different chromossome sizes
     @staticmethod
     def reproduce(S1, S2):
         slides_size1 = len(S1.slides)
@@ -270,6 +271,7 @@ class Slideshow:
         else:
             return Slideshow.spliceEq(S1, S2)
 
+    # Mixes two slideshows with different sizes
     @staticmethod
     def spliceDif(S1, S2):
         minsize = min(len(S1), len(S2))
@@ -305,6 +307,7 @@ class Slideshow:
             Slideshow(Slideshow.RemDups(B1 + A2))
         ]
 
+    # Mixes two slideshows with same size
     @staticmethod
     def spliceEq(A, B):
         midpoint = len(A.slides) // 2
@@ -337,6 +340,7 @@ class Slideshow:
                 Slideshow(Slideshow.RemDups(B1 + A1))
             ])
 
+    # Removes duplicate photos in slideshow
     @staticmethod
     def RemDups(slideList):
         found = set()
