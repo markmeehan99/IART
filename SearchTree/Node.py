@@ -9,7 +9,7 @@ import random
 
 
 @timecall
-def simulated_annealing(init, func, heuristic, init_T, alpha):
+def simulated_annealing(init, func, heuristic, init_T, alpha, to_csv):
     step = 0
     if len(func) == 0:
         return
@@ -19,6 +19,10 @@ def simulated_annealing(init, func, heuristic, init_T, alpha):
     bestEval = nodeEval
     T = init_T
     delta_e = nodeEval
+
+    if to_csv:
+        file = open("simulated_annealing.csv", "w")
+
     while round(T) != 0:
         nextnode = None
         while nextnode is None:
@@ -37,6 +41,11 @@ def simulated_annealing(init, func, heuristic, init_T, alpha):
             bestEval = nodeEval
         T += -alpha * T
         print(step, ",", nextEval, ",", T)
+        
+        if to_csv:
+            s = str(step) + "," +  str(nextEval) + "\n"
+            file.write(s)
+
         step += 1
     return bestNode
 
