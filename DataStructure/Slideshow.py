@@ -3,7 +3,13 @@ from DataStructure.Slide import Slide
 import random
 from profilehooks import timecall
 
-
+# Class that represents a Slideshow.
+# @attribute horizontal_photos_pool: dictionary with all Horizontal Photos.
+# @attribute vertical_photos_pool: dictionary with all Verical Photos.
+# @attribute h_photos_size: number of initial Horizontal Photos.
+# @attribute v_photos_size: number of initial Vertical Photos.
+# @attribute all_ids_set_h: Set with the IDs of all Horizontal Photos.
+# @attribute all_ids_set_v: Set with the IDs of all Vertical Photos.
 class Slideshow:
     horizontal_photos_pool = dict()
     vertical_photos_pool = dict()
@@ -89,6 +95,9 @@ class Slideshow:
     def __lt__(self, other):
         return self.calcFullScore() < other.calcFullScore()
 
+    # Returns a random Photo from given samples
+    # @attribute sample_h: sample pool for Horizontal Photos
+    # @attribute sample_v: sample pool for Vertical Photos
     @staticmethod
     def get_randomPhoto(orientation, sample_h, sample_v):
         if orientation == 'H':
@@ -117,7 +126,8 @@ class Slideshow:
 
     #----------------------OPERATORS---------------------#
 
-    #add operators
+    # Add a Horizontal Photo to a Slideshow
+    # @Soriginal: Slideshow to be added
     @staticmethod
     def add_horizontal(Soriginal):
         if len(Soriginal.missing_photo_ids_h) == 0:
@@ -129,6 +139,8 @@ class Slideshow:
             return None
         return S if S.add_slide(Slide(p[0])) else None
 
+    # Add Verical Photos to a Slideshow
+    # @Soriginal: Slideshow to be added
     @staticmethod
     def add_vertical(Soriginal):
         if len(Soriginal.missing_photo_ids_v) == 0:
@@ -140,7 +152,8 @@ class Slideshow:
             return None
         return S if S.add_slide(Slide(p[0], p[1])) else None
 
-    #remove operators
+    # Remove Operator
+    # @attribute Soriginal: 
     @staticmethod
     def remove_smallest_transition(Soriginal):
         S = deepcopy(Soriginal)
@@ -248,6 +261,7 @@ class Slideshow:
                         break
         return initial_solution
 
+    # Given two slideshows chooses between splice for parents with different chromossome sizes
     @staticmethod
     def reproduce(S1, S2):
         slides_size1 = len(S1.slides)
@@ -257,6 +271,7 @@ class Slideshow:
         else:
             return Slideshow.spliceEq(S1, S2)
 
+    # Mixes two slideshows with different sizes
     @staticmethod
     def spliceDif(S1, S2):
         minsize = min(len(S1), len(S2))
@@ -292,6 +307,7 @@ class Slideshow:
             Slideshow(Slideshow.RemDups(B1 + A2))
         ]
 
+    # Mixes two slideshows with same size
     @staticmethod
     def spliceEq(A, B):
         midpoint = len(A.slides) // 2
@@ -324,6 +340,7 @@ class Slideshow:
                 Slideshow(Slideshow.RemDups(B1 + A1))
             ])
 
+    # Removes duplicate photos in slideshow
     @staticmethod
     def RemDups(slideList):
         found = set()

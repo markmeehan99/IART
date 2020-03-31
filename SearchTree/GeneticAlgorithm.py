@@ -37,7 +37,7 @@ def geneticAlgorithm(initial_population,
                 print(str(n_genes) + " mutations")
         # Selection
         population = selection(population, fitness,bycombat=bycombat)
-        #elitism
+        # elitism
         pbest = max(population)
         best = pbest if best == None or pbest > best else best
         scores = list(map(fitness, population))
@@ -46,7 +46,7 @@ def geneticAlgorithm(initial_population,
         file.close()
     return best
 
-
+# Gives more probability with objects with more weight
 def choice(objects, weights):
     total_weight = sum(weights)
     chances = [i / total_weight for i in weights]
@@ -57,13 +57,14 @@ def choice(objects, weights):
         if x < chances[i]:
             return deepcopy(objects[i])
 
-
+# Select two individuals returns a copy of the fittest one
 def choiceByCombat(population, fitness, N=None):
     [f1, f2] = [random.choice(population), random.choice(population)]
 
     return deepcopy(f1 if fitness(f1) >= fitness(f2) else f2)
 
 
+# Selects and clones N individuals from a population with size N
 @timecall
 def selection(population, fitness, N=None, bycombat=None):
     if N is None:
@@ -79,7 +80,7 @@ def selection(population, fitness, N=None, bycombat=None):
         result = [choice(population, fitnesses) for x in range(N)]
     return result
 
-
+# Selects two parents to reproduce
 @timecall
 def reproduction(population, elitism=False):
     if elitism:
