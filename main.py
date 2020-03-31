@@ -54,7 +54,7 @@ def display_algorithm_options():
         print("|        5. Quit                       |")
         print("")
 
-        option = input("|   Select  ")
+        option = input("|   > Select  ")
 
         if option == "1":
             hill_climbing_option()
@@ -72,9 +72,7 @@ def display_algorithm_options():
 
 def get_iter_max():
     while True:
-        iter_max = input(
-            "|   Define maximum number of iterations (over 100 ; 'default' for 1000; -1 for no limit): "
-        )
+        iter_max = input("|   > Define maximum number of iterations (over 100 ; 'default' for 1000; -1 for no limit): ")
         if iter_max == "default" or iter_max == '':
             iter_max = 1000
         else:
@@ -87,8 +85,7 @@ def get_iter_max():
 
 def initial_state_size():
     while True:
-        size = input(
-            "|   Limit number of initial state slides (None for no limit): ")
+        size = input("|   > Limit number of initial state slides (None for no limit): ")
         if size == "None" or size == '':
             size = None
         else:
@@ -102,7 +99,7 @@ def initial_state_size():
 def get_csv_option():
     while True:
         csv = input(
-            "|   Do you wish to save the development in csv format (y/n): ")
+            "|   > Do you wish to save the development in csv format (y/n): ")
 
         if csv == "y":
             csv = True
@@ -159,9 +156,7 @@ def tabu_search_option():
     iter_max = get_iter_max()
 
     while True:
-        n_iterations = input(
-            "|   Define stop criteria: number of iterations after the best score found (over 25 ; 'default' for 100): "
-        )
+        n_iterations = input("|   > Define stop criteria: number of iterations after the best score found (over 25 ; 'default' for 100): ")
         if n_iterations == "default" or n_iterations == '':
             n_iterations = 100
         else:
@@ -194,9 +189,7 @@ def tabu_search_option():
 
 def simulated_annealing_option():
     while True:
-        init_T = input(
-            "|   Insert initial temperature (over 1000 | 'default' for default=1000000): "
-        )
+        init_T = input("|   > Insert initial temperature (over 1000 | 'default' for default=1000000): ")
         if init_T == "default" or init_T == '':
             init_T = 10**5
         else:
@@ -207,7 +200,7 @@ def simulated_annealing_option():
         break
 
     while True:
-        alpha = input("|   Insert alpha (in ]0,1[ ; 'default' for 0.01): ")
+        alpha = input("|   > Insert alpha (in ]0,1[ ; 'default' for 0.01): ")
         if alpha == "default" or alpha == '':
             alpha = 0.01
         else:
@@ -238,9 +231,7 @@ def simulated_annealing_option():
 
 def genetic_algorithm_option():
     while True:
-        n_population = input(
-            "|   Insert number of initial population (in ]0,100] ; 'default' for 30): "
-        )
+        n_population = input("|   > Insert number of initial population (in ]0,100] ; 'default' for 30): ")
         if n_population == "default" or n_population == '':
             n_population = 30
         else:
@@ -251,9 +242,7 @@ def genetic_algorithm_option():
         break
 
     while True:
-        individual_size = input(
-            "|   Insert size of initial solution of each individual (over 0 ; 'default' for 100): "
-        )
+        individual_size = input("|   > Insert size of initial solution of each individual (over 0 ; 'default' for 100): ")
         if individual_size == "default" or individual_size == '':
             individual_size = 100
         else:
@@ -264,9 +253,7 @@ def genetic_algorithm_option():
         break
 
     while True:
-        n_generations = input(
-            "|   Insert number of generations (in ]0,100] ; 'default' for 30): "
-        )
+        n_generations = input("|   > Insert number of generations (in ]0,100] ; 'default' for 30): ")
         if n_generations == "default" or n_generations == '':
             n_generations = 30
         else:
@@ -277,14 +264,12 @@ def genetic_algorithm_option():
         break
 
     while True:
-        mutation = input("|   Do you wish to mutate (y/n): ")
+        mutation = input("|   > Do you wish to mutate (y/n): ")
         if mutation == "y":
             mutation = True
 
             while True:
-                mutation_chance = input(
-                    "|   Insert mutation chance (in ]0,1[ ; 'default' for 0.05): "
-                )
+                mutation_chance = input("|   > Insert mutation chance (in ]0,1[ ; 'default' for 0.05): ")
                 if mutation_chance == "default" or mutation_chance == '':
                     mutation_chance = 0.05
                 else:
@@ -360,7 +345,7 @@ if __name__ == "__main__":
         print("|         2. Quit                      |")
         print("")
 
-        option = input("|   Select ")
+        option = input("|   > Select ")
 
         if option == "1":
             display_algorithm_options()
