@@ -231,8 +231,6 @@ def simulated_annealing_option():
         Slideshow.trade_random
     ]
 
-    slideshow = Slideshow.get_initial_state()
-
     simulated_annealing(slideshow, operators, Slideshow.getScore, init_T, alpha, csv)
 
     print("--------------- Finished ---------------")
