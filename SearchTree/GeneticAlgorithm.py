@@ -4,6 +4,7 @@ from copy import deepcopy
 from profilehooks import timecall
 
 
+@timecall
 def geneticAlgorithm(initial_population,
                      fitness,
                      no_generations,
@@ -37,8 +38,8 @@ def geneticAlgorithm(initial_population,
         # Selection
         population = selection(population, fitness,bycombat=bycombat)
         #elitism
-        pbest = max(population) 
-        best = pbest if best == None or pbest > best else best 
+        pbest = max(population)
+        best = pbest if best == None or pbest > best else best
         scores = list(map(fitness, population))
         printGeneration(population, scores, n, file)
     if file is not None:
