@@ -9,7 +9,8 @@ def geneticAlgorithm(initial_population,
                      no_generations,
                      mutations=None,
                      mutate_chance=0.05,
-                     to_csv=False):
+                     to_csv=False,
+                     bycombat = None):
     population = initial_population
     file = None
     best = None
@@ -34,7 +35,7 @@ def geneticAlgorithm(initial_population,
                         population[j] = mutation(population[j])
                 print(str(n_genes) + " mutations")
         # Selection
-        population = selection(population, fitness)
+        population = selection(population, fitness,bycombat=bycombat)
         #elitism
         pbest = max(population) 
         best = pbest if best == None or pbest > best else best 

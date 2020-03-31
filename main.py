@@ -11,10 +11,10 @@ from os import path
 
 
 @timecall
-def gen_N(N,size=200):
+def gen_N(N, size=200):
     s = []
     for i in range(N):
-        s.append(Slideshow.get_initial_state(size,True))
+        s.append(Slideshow.get_initial_state(size, True))
         print(i)
     return s
 
@@ -72,7 +72,9 @@ def display_algorithm_options():
 
 def get_iter_max():
     while True:
-        iter_max = input("|   Define maximum number of iterations (over 100 ; 'default' for 1000; -1 for no limit): ")
+        iter_max = input(
+            "|   Define maximum number of iterations (over 100 ; 'default' for 1000; -1 for no limit): "
+        )
         if iter_max == "default" or iter_max == '':
             iter_max = 1000
         else:
@@ -82,9 +84,11 @@ def get_iter_max():
                 continue
         return iter_max
 
+
 def initial_state_size():
     while True:
-        size = input("|   Limit number of initial state slides (None for no limit): ")
+        size = input(
+            "|   Limit number of initial state slides (None for no limit): ")
         if size == "None" or size == '':
             size = None
         else:
@@ -108,6 +112,7 @@ def get_csv_option():
             print("------------ Invalid value -------------")
             continue
         return csv
+
 
 def finish(slideshow, algorithm):
     print("--------------- Finished ---------------")
@@ -144,16 +149,19 @@ def hill_climbing_option():
         Slideshow.trade_random, Slideshow.trade_random, Slideshow.shuffle
     ]
 
-    slideshow = hillClimb(slideshow, operators, Slideshow.getScore, csv, iter_max)
+    slideshow = hillClimb(slideshow, operators, Slideshow.getScore, csv,
+                          iter_max)
 
     finish(slideshow, "hillclimbing")
-    
+
 
 def tabu_search_option():
     iter_max = get_iter_max()
 
     while True:
-        n_iterations = input("|   Define stop criteria: number of iterations after the best score found (over 25 ; 'default' for 100): ")
+        n_iterations = input(
+            "|   Define stop criteria: number of iterations after the best score found (over 25 ; 'default' for 100): "
+        )
         if n_iterations == "default" or n_iterations == '':
             n_iterations = 100
         else:
@@ -178,14 +186,17 @@ def tabu_search_option():
         Slideshow.trade_random, Slideshow.trade_random, Slideshow.shuffle
     ]
 
-    slideshow = tabuSearch(slideshow, operators, Slideshow.getScore, n_iterations, csv, iter_max)
+    slideshow = tabuSearch(slideshow, operators, Slideshow.getScore,
+                           n_iterations, csv, iter_max)
 
     finish(slideshow, "tabusearch")
 
 
 def simulated_annealing_option():
     while True:
-        init_T = input("|   Insert initial temperature (over 1000 | 'default' for default=1000000): ")
+        init_T = input(
+            "|   Insert initial temperature (over 1000 | 'default' for default=1000000): "
+        )
         if init_T == "default" or init_T == '':
             init_T = 10**5
         else:
@@ -219,14 +230,17 @@ def simulated_annealing_option():
         Slideshow.trade_random
     ]
 
-    slideshow = simulated_annealing(slideshow, operators, Slideshow.getScore, init_T, alpha, csv)
+    slideshow = simulated_annealing(slideshow, operators, Slideshow.getScore,
+                                    init_T, alpha, csv)
 
     finish(slideshow, "simulatedannealing")
 
 
 def genetic_algorithm_option():
     while True:
-        n_population = input("|   Insert number of initial population (in ]0,100] ; 'default' for 30): ")
+        n_population = input(
+            "|   Insert number of initial population (in ]0,100] ; 'default' for 30): "
+        )
         if n_population == "default" or n_population == '':
             n_population = 30
         else:
@@ -237,7 +251,9 @@ def genetic_algorithm_option():
         break
 
     while True:
-        individual_size = input("|   Insert size of initial solution of each individual (over 0 ; 'default' for 100): ")
+        individual_size = input(
+            "|   Insert size of initial solution of each individual (over 0 ; 'default' for 100): "
+        )
         if individual_size == "default" or individual_size == '':
             individual_size = 100
         else:
@@ -248,7 +264,9 @@ def genetic_algorithm_option():
         break
 
     while True:
-        n_generations = input("|   Insert number of generations (in ]0,100] ; 'default' for 30): ")
+        n_generations = input(
+            "|   Insert number of generations (in ]0,100] ; 'default' for 30): "
+        )
         if n_generations == "default" or n_generations == '':
             n_generations = 30
         else:
@@ -264,7 +282,9 @@ def genetic_algorithm_option():
             mutation = True
 
             while True:
-                mutation_chance = input("|   Insert mutation chance (in ]0,1[ ; 'default' for 0.05): ")
+                mutation_chance = input(
+                    "|   Insert mutation chance (in ]0,1[ ; 'default' for 0.05): "
+                )
                 if mutation_chance == "default" or mutation_chance == '':
                     mutation_chance = 0.05
                 else:
@@ -281,16 +301,45 @@ def genetic_algorithm_option():
             continue
         break
 
+    bycombat = None
+    while True:
+        print("-----------------------------------------")
+        print("|   Choose a method for cloning:")
+        print("|   1 - Choice by combat, pick two random parents")
+        print(
+            "|   2 - Choice by weight, clone the parents with greater score with higher probability"
+        )
+        print("|   3 - Each genration pick randomly between 1 and 2")
+        op = input("|   Pick one (2 by default): ")
+        if op == "1":
+            bycombat = True
+            break
+        elif op == "2" or op == '':
+            bycombat = False
+            break
+        elif op == '3':
+            bycombat = None
+            break
+        else:
+            print("------------ Invalid value -------------")
+
     csv = get_csv_option()
 
-    population = gen_N(n_population,50)
+    population = gen_N(n_population, individual_size)
 
     operators = [
-        Slideshow.remove_smallest_transition,
-        Slideshow.remove_random_slide, Slideshow.trade_random, Slideshow.shuffle
+        Slideshow.remove_smallest_transition, Slideshow.remove_random_slide,
+        Slideshow.trade_random, Slideshow.shuffle
     ]
 
-    slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations,mutations=operators,to_csv=csv)
+    operators = operators if mutation else None
+
+    slideshow = geneticAlgorithm(population,
+                                 Slideshow.getScore,
+                                 n_generations,
+                                 mutations=operators,
+                                 to_csv=csv,
+                                 bycombat=bycombat)
 
     finish(slideshow, "geneticalgorithm")
 
