@@ -106,6 +106,23 @@ def get_csv_option():
             continue
         return csv
 
+def finish(slideshow, algorithm):
+    print("--------------- Finished ---------------")
+    print("Solution: " + str(len(slideshow.slides)) + " slides")
+    print("Score: " + str(Slideshow.getScore(slideshow)))
+    print("--------- Creating output file ---------")
+    file_name = algorithm + "_solved.txt"
+
+    solution = open(file_name, "w")
+
+    solution.write("File: " + sys.argv[1] + "\n")
+    solution.write("Score: " + str(len(slideshow.slides)) + "\n")
+    solution.write(str(slideshow) + "\n")
+    solution.close()
+
+    print("|   Output file: " + file_name)
+
+
 def hill_climbing_option():
     iter_max = get_iter_max()
 
@@ -132,9 +149,7 @@ def hill_climbing_option():
 
     slideshow = hillClimb(slideshow, operators, Slideshow.getScore, csv, iter_max)
 
-    print("--------------- Finished ---------------")
-    print("Solution: " + str(slideshow))
-    print("Score: " + str(Slideshow.getScore(slideshow)))
+    finish(slideshow, "hillclimbing")
     
 
 def tabu_search_option():
@@ -174,9 +189,7 @@ def tabu_search_option():
     
     slideshow = tabuSearch(slideshow, operators, Slideshow.getScore, n_iterations, csv, iter_max)
 
-    print("--------------- Finished ---------------")
-    print("Solution: " + str(slideshow))
-    print("Score: " + str(Slideshow.getScore(slideshow)))
+    finish(slideshow, "tabusearch")
 
 
 def simulated_annealing_option():
@@ -197,7 +210,7 @@ def simulated_annealing_option():
             alpha = 0.01
         else:
             alpha = float(alpha)
-            if alpha <= 0 and alpha >= 1:
+            if alpha <= 0 or alpha >= 1:
                 print("------------ Invalid value -------------")
                 continue
         break
@@ -219,9 +232,7 @@ def simulated_annealing_option():
 
     slideshow = simulated_annealing(slideshow, operators, Slideshow.getScore, init_T, alpha, csv)
 
-    print("--------------- Finished ---------------")
-    print("Solution: " + str(slideshow))
-    print("Score: " + str(Slideshow.getScore(slideshow)))
+    finish(slideshow, "simulatedannealing")
 
 
 def genetic_algorithm_option(): 
@@ -231,7 +242,18 @@ def genetic_algorithm_option():
             n_population = 30
         else:
             n_population = int(n_population)
-            if n_population <= 0 and n_population > 100:
+            if n_population <= 0 or n_population > 100:
+                print("------------ Invalid value -------------")
+                continue
+        break
+
+    while True:
+        individual_size = input("|   Insert size of initial solution of each individual (over 0 ; 'default' for 100): ")
+        if individual_size == "default" or individual_size == '':
+            individual_size = 100
+        else:
+            individual_size = int(individual_size)
+            if individual_size <= 0:
                 print("------------ Invalid value -------------")
                 continue
         break
@@ -242,9 +264,32 @@ def genetic_algorithm_option():
             n_generations = 30
         else:
             n_generations = int(n_generations)
-            if n_generations <= 0 and n_generations > 100:
+            if n_generations <= 0 or n_generations > 100:
                 print("------------ Invalid value -------------")
                 continue
+        break
+
+    while True:
+        mutation = input("|   Do you wish to mutate (y/n): ")
+        if mutation == "y":
+            mutation = True
+
+            while True:
+                mutation_chance = input("|   Insert mutation chance (in ]0,1[ ; 'default' for 0.05): ")
+                if mutation_chance == "default" or mutation_chance == '':
+                    mutation_chance = 0.05
+                else:
+                    mutation_chance = float(mutation_chance)
+                    if mutation_chance <= 0 or mutation_chance >= 1:
+                        print("------------ Invalid value -------------")
+                        continue
+                break
+
+        elif mutation == "n":
+            mutation = False
+        else:
+            print("------------ Invalid value -------------")
+            continue
         break
 
     csv = get_csv_option()
@@ -253,9 +298,7 @@ def genetic_algorithm_option():
 
     slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations, csv)
 
-    print("--------------- Finished ---------------")
-    print("Solution: " + str(slideshow))
-    print("Score: " + str(Slideshow.getScore(slideshow)))
+    finish(slideshow, "geneticalgorithm")
 
 
 if __name__ == "__main__":
