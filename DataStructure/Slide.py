@@ -1,3 +1,6 @@
+# Represents a Slide
+# @attribute left_photo: left photo of Slide
+# @attribute right_photo: right photo of Slide
 class Slide:
     def __init__(self, left_photo, right_photo=None):
         self.orientation = 'H'
@@ -12,14 +15,14 @@ class Slide:
     def isVertical(self): 
         return self.right_photo is not None
 
-    #update tag union when there is a change in one of the vertical photos
+    # Update tag union when there is a change in one of the vertical photos
     def update_tags(self):
         self.tags = self.left_photo.tags
 
         if self.right_photo is not None:
             self.tags |= self.right_photo.tags
 
-    #compare "equal" function of this class
+    # Compare "equal" function of this class
     def __eq__(self, value):
         if self.orientation != value.orientation:
             return False
@@ -30,14 +33,14 @@ class Slide:
                 return False
         return True
 
-    #hash to insert on the dictionary
+    # Hash to insert on the dictionary
     def __hash__(self):
         h = hash(self.left_photo)
         if self.isVertical():
             h += hash(self.right_photo)
         return h
 
-    #defines the way slideshow is going to print itself: S<PHOTO_ID>S<PHOTO_L_ID, PHOTO_R_ID>
+    # Defines the way slideshow is going to print itself: S<PHOTO_ID>S<PHOTO_L_ID, PHOTO_R_ID>
     def __repr__(self):
         s = "S<" + self.left_photo.__repr__()
         if self.isVertical():
@@ -69,5 +72,4 @@ class Slide:
         h1 = Slide.getCommonTagsCount(prevSlide, nextSlide)
         h2 = Slide.getUniqueTags(prevSlide, nextSlide)
         h3 = Slide.getUniqueTags(nextSlide, prevSlide)
-
         return min(h1, h2, h3)
