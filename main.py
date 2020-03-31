@@ -104,7 +104,7 @@ def hill_climbing_option():
         iter_max = input(
             "|   Define maximum number of iterations (over 100 ; 'default' for 1000): "
         )
-        if iter_max == "default":
+        if iter_max == "default" or iter_max == '':
             iter_max = 1000
         else:
             iter_max = int(iter_max)
@@ -140,7 +140,7 @@ def tabu_search_option():
         n_interations = input(
             "|   Define stop criteria: number of iterations after the best score found (over 25 ; 'default' for 100): "
         )
-        if n_interations == "default":
+        if n_interations == "default" or n_interations == '':
             n_interations = 100
         else:
             n_interations = int(n_interations)
@@ -152,7 +152,7 @@ def tabu_search_option():
         iter_max = input(
             "|   Define maximum number of iterations (over 100 ; 'default' for 1000): "
         )
-        if iter_max == "default":
+        if iter_max == "default" or iter_max == '':
             iter_max = 1000
         else:
             iter_max = int(iter_max)
@@ -189,7 +189,7 @@ def simulated_annealing_option():
         init_T = input(
             "|   Insert initial temperature (over 1000 | 'default' for default=1000000): "
         )
-        if init_T == "default":
+        if init_T == "default" or init_T == '':
             init_T = 10**5
         else:
             init_T = int(init_T)
@@ -200,7 +200,7 @@ def simulated_annealing_option():
 
     while True:
         alpha = input("|   Insert alpha (in ]0,1[ ; 'default' for 0.01): ")
-        if alpha == "default":
+        if alpha == "default" or alpha == '':
             alpha = 0.01
         else:
             alpha = float(alpha)
@@ -235,7 +235,7 @@ def genetic_algorithm_option():
         n_population = input(
             "|   Insert number of initial population (in ]0,100] ; 'default' for 30): "
         )
-        if n_population == "default":
+        if n_population == "default" or n_population == '':
             n_population = 30
         else:
             n_population = int(n_population)
@@ -248,7 +248,7 @@ def genetic_algorithm_option():
         n_generations = input(
             "|   Insert number of generations (in ]0,100] ; 'default' for 30): "
         )
-        if n_generations == "default":
+        if n_generations == "default" or n_generations == '':
             n_generations = 30
         else:
             n_generations = int(n_generations)
@@ -261,8 +261,7 @@ def genetic_algorithm_option():
 
     population = gen_N(n_population)
 
-    slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations,
-                                 csv)
+    slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations)
 
     print("--------------- Finished ---------------")
     print("Solution: " + str(slideshow))
