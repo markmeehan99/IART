@@ -3,7 +3,7 @@ from DataStructure.Slide import Slide
 import random
 from profilehooks import timecall
 
-
+@timecall
 class Slideshow:
     horizontal_photos_pool = dict()
     vertical_photos_pool = dict()
