@@ -44,17 +44,6 @@ def test_nsplices(N):
 
 
 
-def display_create_slideshow():
-    while(True):
-        file_path = input("|   Insert file's path ('q' to quit): ")
-
-        if file_path == 'q':
-            break
-        elif path.exists(file_path):
-            parse_input_file(file_path)
-            display_algorithm_options()
-        else: print("|-------- File does not exist ---------|")
-
 def display_algorithm_options():
     while(True):
         print("")
@@ -76,6 +65,8 @@ def display_algorithm_options():
             simulated_annealing_option()
         elif option == "4":
             genetic_algorithm_option()
+        elif option == "5":
+            return
         else: print("-------- Select a valid option! --------")
 
 def initial_state_size():
@@ -273,6 +264,12 @@ def genetic_algorithm_option():
 
 
 if __name__ == "__main__":
+    if len(sys.argv) != 2 :
+        print("Error in call. Usage: python3 main <file_path>")
+        exit(-1)
+
+    parse_input_file(sys.argv[1])
+
     print("========================================")
     print("=========== Photo Slideshow ============")
 
@@ -285,7 +282,7 @@ if __name__ == "__main__":
         option = input("|   Select ")
 
         if option == "1":
-            display_create_slideshow()
+            display_algorithm_options()
         elif option == "2":
             print("")
             print("=============== Goodbye ================")
