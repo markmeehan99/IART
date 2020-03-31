@@ -63,4 +63,6 @@ Score: 35
 
 
 
-Note: A few of the inputs don't have validation: for example, when the user inserts a string instead of an integer.
+Note: 
+    > A few of the inputs don't have validation: for example, when the user inserts a string instead of an integer.
+    > There is a folder of test files called 'input' inside the Parser module.

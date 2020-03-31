@@ -4,7 +4,7 @@ from Parser.InputParser import *
 from profilehooks import timecall
 from SearchTree.GeneticAlgorithm import geneticAlgorithm
 from SearchTree.GeneticAlgorithm import generateRandomPairs
-from SearchTree.Node import *
+from SearchTree.Algorithms import *
 
 import os.path
 from os import path
