@@ -12,10 +12,12 @@ def geneticAlgorithm(initial_population,
                      to_csv=False):
     population = initial_population
     file = None
+    best = None
     if to_csv:
         file = open("Genetic_algorithm.csv", "w")
         file.write("Generation,Min,Max,Average\n")
 
+    print(list(map(fitness, population)))
     for n in range(no_generations):
         # Reproduction
         population = reproduction(population)
@@ -23,19 +25,24 @@ def geneticAlgorithm(initial_population,
         # Mutation
         if mutations is not None:
             if isinstance(mutations, list):
+                n_genes = 0
                 for j in range(len(population)):
                     x = random.random()
-                    if x < mutate_chance:
+                    if x <= mutate_chance:
+                        n_genes += 1
                         mutation = random.choice(mutations)
-                        print("Mutation on " + str(j) + " " + mutation.__name__)
                         population[j] = mutation(population[j])
+                print(str(n_genes) + " mutations")
         # Selection
+        population = selection(population, fitness)
+        #elitism
+        pbest = max(population) 
+        best = pbest if best == None or pbest > best else best 
         scores = list(map(fitness, population))
-        population = selection(population, scores)
         printGeneration(population, scores, n, file)
     if file is not None:
         file.close()
-    return max(population)
+    return best
 
 
 def choice(objects, weights):
@@ -50,18 +57,25 @@ def choice(objects, weights):
 
 
 def choiceByCombat(population, fitness, N=None):
-    pop_size = len(population) if N is None else N
-
     [f1, f2] = [random.choice(population), random.choice(population)]
 
     return deepcopy(f1 if fitness(f1) >= fitness(f2) else f2)
 
 
 @timecall
-def selection(population, fitness, N=None):
+def selection(population, fitness, N=None, bycombat=None):
     if N is None:
         N = len(population)
-    return [choice(population, fitness) for x in range(N)]
+    result = []
+    bycombat = random.choice([True, False]) if bycombat is  None else bycombat
+    if bycombat:
+        print("Choice by Combat")
+        result = [choiceByCombat(population, fitness) for x in range(N)]
+    else:
+        print("Choice by weight")
+        fitnesses = list(map(fitness, population))
+        result = [choice(population, fitnesses) for x in range(N)]
+    return result
 
 
 @timecall
@@ -131,4 +145,3 @@ def printGeneration(pop, scores, n, file):
     if file is not None:
         s = str(n) + "," + str(minp) + "," + str(maxp) + "," + str(avg) + "\n"
         file.write(s)
-

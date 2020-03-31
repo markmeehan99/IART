@@ -11,7 +11,7 @@ from os import path
 
 
 @timecall
-def gen_N(N,size=2000):
+def gen_N(N,size=200):
     s = []
     for i in range(N):
         s.append(Slideshow.get_initial_state(size,True))
@@ -239,12 +239,11 @@ def genetic_algorithm_option():
 
     csv = get_csv_option()
 
-    population = gen_N(n_population)
+    population = gen_N(n_population,50)
 
     operators = [
-        Slideshow.add_horizontal, Slideshow.add_vertical,
-        Slideshow.remove_smallest_transition, Slideshow.trade_random,
-        Slideshow.trade_random
+        Slideshow.remove_smallest_transition,
+        Slideshow.remove_random_slide, Slideshow.trade_random, Slideshow.shuffle
     ]
 
     slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations,mutations=operators,to_csv=csv)
