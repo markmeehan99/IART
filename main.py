@@ -57,6 +57,7 @@ def display_create_slideshow():
 
 def display_algorithm_options():
     while(True):
+        print("")
         print("|------------- Algorithms -------------|")
         print("|        1. Hill Climbing              |")
         print("|        2. Tabu Search                |")
@@ -77,6 +78,17 @@ def display_algorithm_options():
             genetic_algorithm_option()
         else: print("-------- Select a valid option! --------")
 
+def initial_state_size():
+    while True:
+        size = input("|   Limit number of initial state slides (None for no limit): ")
+        if size == "None":
+            size = None
+        else:
+            size = int(size)
+            if size <= 0:
+                print("------------ Invalid value -------------")
+                continue
+        return size
 
 def get_csv_option():
     while True:
@@ -103,7 +115,12 @@ def hill_climbing_option():
                 continue
         break
 
+    size = initial_state_size()
+
     csv = get_csv_option()
+
+    exactly = True if size != None else False
+    slideshow = Slideshow.get_initial_state(size, exactly)
 
     operators = [
         Slideshow.add_horizontal,
@@ -118,8 +135,6 @@ def hill_climbing_option():
         Slideshow.trade_random,
         Slideshow.shuffle
     ]
-
-    slideshow = Slideshow.get_initial_state()
 
     hillClimb(slideshow, operators, Slideshow.getScore, csv, iter_max)
 
@@ -150,7 +165,12 @@ def tabu_search_option():
                 continue
         break
 
+    size = initial_state_size()
+
     csv = get_csv_option()
+
+    exactly = True if size != None else False
+    slideshow = Slideshow.get_initial_state(size, exactly)
 
     operators = [
         Slideshow.add_horizontal,
@@ -165,8 +185,6 @@ def tabu_search_option():
         Slideshow.trade_random,
         Slideshow.shuffle
     ]
-
-    slideshow = Slideshow.get_initial_state()
     
     tabuSearch(slideshow, operators, Slideshow.getScore, csv, n_interations, iter_max)
 
@@ -198,10 +216,20 @@ def simulated_annealing_option():
                 continue
         break
 
+    size = initial_state_size()
+
     csv = get_csv_option()
+
+    exactly = True if size != None else False
+    slideshow = Slideshow.get_initial_state(size, exactly)
     
-    operators = [Slideshow.add_horizontal, Slideshow.add_vertical, 
-        Slideshow.remove_smallest_transition, Slideshow.trade_random, Slideshow.trade_random]
+    operators = [
+        Slideshow.add_horizontal, 
+        Slideshow.add_vertical, 
+        Slideshow.remove_smallest_transition, 
+        Slideshow.trade_random, 
+        Slideshow.trade_random
+    ]
 
     slideshow = Slideshow.get_initial_state()
 
