@@ -181,12 +181,23 @@ class Slideshow:
         S = deepcopy(Soriginal)
         indexes = [x for x in range(len(S.slides))]
         [i1, i2] = random.sample(indexes, 2)
-        slide_aux = S.slides[i2]
+        s1 = S.slides[i1]
+        s2 = S.slides[i2]
 
-        S.slides[i2] = S.slides[i1]
-        S.slides[i1] = slide_aux
+        if s1.isVertical() and s2.isVertical():
+            p1 = s1.right_photo
+            p2 = s2.right_photo
+            p1.right_photo = p2
+            p2.right_photo = p1
+            s1.update_tags()
+            s2.update_tags()
+            return S
+        else:
+            slide_aux = S.slides[i2]
 
-        return S
+            S.slides[i2] = S.slides[i1]
+            S.slides[i1] = slide_aux
+            return S
 
     @staticmethod
     def shuffle(Soriginal):
@@ -199,7 +210,7 @@ class Slideshow:
     def get_initial_state(top=None, exactly=False):
         n_verticalp = Slideshow.v_photos_size
         n_horizontalp = Slideshow.h_photos_size
-        
+
         n_max_slides = top
         if top is None:
             n_max_slides = n_horizontalp

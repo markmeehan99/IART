@@ -4,7 +4,7 @@ from Parser.InputParser import *
 from profilehooks import timecall
 from SearchTree.GeneticAlgorithm import geneticAlgorithm
 from SearchTree.GeneticAlgorithm import generateRandomPairs
-from SearchTree.Node import * 
+from SearchTree.Node import *
 
 import os.path
 from os import path
@@ -43,9 +43,8 @@ def test_nsplices(N):
         [s1, s2] = test_splice(s1, s2)
 
 
-
 def display_algorithm_options():
-    while(True):
+    while (True):
         print("")
         print("|------------- Algorithms -------------|")
         print("|        1. Hill Climbing              |")
@@ -54,7 +53,7 @@ def display_algorithm_options():
         print("|        4. Genetic Algorithm          |")
         print("|        5. Quit                       |")
         print("")
-        
+
         option = input("|   Select  ")
 
         if option == "1":
@@ -67,11 +66,14 @@ def display_algorithm_options():
             genetic_algorithm_option()
         elif option == "5":
             return
-        else: print("-------- Select a valid option! --------")
+        else:
+            print("-------- Select a valid option! --------")
+
 
 def initial_state_size():
     while True:
-        size = input("|   Limit number of initial state slides (None for no limit): ")
+        size = input(
+            "|   Limit number of initial state slides (None for no limit): ")
         if size == "None":
             size = None
         else:
@@ -81,9 +83,11 @@ def initial_state_size():
                 continue
         return size
 
+
 def get_csv_option():
     while True:
-        csv = input("|   Do you wish to save the development in csv format (y/n): ")
+        csv = input(
+            "|   Do you wish to save the development in csv format (y/n): ")
 
         if csv == "y":
             csv = True
@@ -94,9 +98,12 @@ def get_csv_option():
             continue
         return csv
 
+
 def hill_climbing_option():
     while True:
-        iter_max = input("|   Define maximum number of iterations (over 100 ; 'default' for 1000): ")
+        iter_max = input(
+            "|   Define maximum number of iterations (over 100 ; 'default' for 1000): "
+        )
         if iter_max == "default":
             iter_max = 1000
         else:
@@ -114,17 +121,11 @@ def hill_climbing_option():
     slideshow = Slideshow.get_initial_state(size, exactly)
 
     operators = [
-        Slideshow.add_horizontal,
-        Slideshow.add_vertical,
-        Slideshow.add_horizontal,
-        Slideshow.add_vertical,
-        Slideshow.remove_smallest_transition,
-        Slideshow.remove_random_slide,
-        Slideshow.remove_random_slide,
-        Slideshow.trade_random,
-        Slideshow.trade_random,
-        Slideshow.trade_random,
-        Slideshow.shuffle
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.remove_smallest_transition, Slideshow.remove_random_slide,
+        Slideshow.remove_random_slide, Slideshow.trade_random,
+        Slideshow.trade_random, Slideshow.trade_random, Slideshow.shuffle
     ]
 
     hillClimb(slideshow, operators, Slideshow.getScore, csv, iter_max)
@@ -132,11 +133,13 @@ def hill_climbing_option():
     print("--------------- Finished ---------------")
     print("Solution: " + str(slideshow))
     print("Score: " + str(slideshow.getScore))
-    
+
 
 def tabu_search_option():
     while True:
-        n_interations = input("|   Define stop criteria: number of iterations after the best score found (over 25 ; 'default' for 100): ")
+        n_interations = input(
+            "|   Define stop criteria: number of iterations after the best score found (over 25 ; 'default' for 100): "
+        )
         if n_interations == "default":
             n_interations = 100
         else:
@@ -146,7 +149,9 @@ def tabu_search_option():
                 continue
         break
     while True:
-        iter_max = input("|   Define maximum number of iterations (over 100 ; 'default' for 1000): ")
+        iter_max = input(
+            "|   Define maximum number of iterations (over 100 ; 'default' for 1000): "
+        )
         if iter_max == "default":
             iter_max = 1000
         else:
@@ -164,20 +169,15 @@ def tabu_search_option():
     slideshow = Slideshow.get_initial_state(size, exactly)
 
     operators = [
-        Slideshow.add_horizontal,
-        Slideshow.add_vertical,
-        Slideshow.add_horizontal,
-        Slideshow.add_vertical,
-        Slideshow.remove_smallest_transition,
-        Slideshow.remove_random_slide,
-        Slideshow.remove_random_slide,
-        Slideshow.trade_random,
-        Slideshow.trade_random,
-        Slideshow.trade_random,
-        Slideshow.shuffle
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.remove_smallest_transition, Slideshow.remove_random_slide,
+        Slideshow.remove_random_slide, Slideshow.trade_random,
+        Slideshow.trade_random, Slideshow.trade_random, Slideshow.shuffle
     ]
-    
-    tabuSearch(slideshow, operators, Slideshow.getScore, csv, n_interations, iter_max)
+
+    tabuSearch(slideshow, operators, Slideshow.getScore, n_interations, csv,
+               iter_max)
 
     print("--------------- Finished ---------------")
     print("Solution: " + str(slideshow))
@@ -186,7 +186,9 @@ def tabu_search_option():
 
 def simulated_annealing_option():
     while True:
-        init_T = input("|   Insert initial temperature (over 1000 | 'default' for default=1000000): ")
+        init_T = input(
+            "|   Insert initial temperature (over 1000 | 'default' for default=1000000): "
+        )
         if init_T == "default":
             init_T = 10**5
         else:
@@ -195,7 +197,7 @@ def simulated_annealing_option():
                 print("------------ Invalid value -------------")
                 continue
         break
-        
+
     while True:
         alpha = input("|   Insert alpha (in ]0,1[ ; 'default' for 0.01): ")
         if alpha == "default":
@@ -213,25 +215,26 @@ def simulated_annealing_option():
 
     exactly = True if size != None else False
     slideshow = Slideshow.get_initial_state(size, exactly)
-    
+
     operators = [
-        Slideshow.add_horizontal, 
-        Slideshow.add_vertical, 
-        Slideshow.remove_smallest_transition, 
-        Slideshow.trade_random, 
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.remove_smallest_transition, Slideshow.trade_random,
         Slideshow.trade_random
     ]
 
-    simulated_annealing(slideshow, operators, Slideshow.getScore, init_T, alpha, csv)
+    simulated_annealing(slideshow, operators, Slideshow.getScore, init_T,
+                        alpha, csv)
 
     print("--------------- Finished ---------------")
     print("Solution: " + str(slideshow))
     print("Score: " + str(slideshow.getScore))
 
 
-def genetic_algorithm_option(): 
+def genetic_algorithm_option():
     while True:
-        n_population = input("|   Insert number of initial population (in ]0,100] ; 'default' for 30): ")
+        n_population = input(
+            "|   Insert number of initial population (in ]0,100] ; 'default' for 30): "
+        )
         if n_population == "default":
             n_population = 30
         else:
@@ -242,7 +245,9 @@ def genetic_algorithm_option():
         break
 
     while True:
-        n_generations = input("|   Insert number of generations (in ]0,100] ; 'default' for 30): ")
+        n_generations = input(
+            "|   Insert number of generations (in ]0,100] ; 'default' for 30): "
+        )
         if n_generations == "default":
             n_generations = 30
         else:
@@ -256,7 +261,8 @@ def genetic_algorithm_option():
 
     population = gen_N(n_population)
 
-    slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations, csv)
+    slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations,
+                                 csv)
 
     print("--------------- Finished ---------------")
     print("Solution: " + str(slideshow))
@@ -264,7 +270,7 @@ def genetic_algorithm_option():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2 :
+    if len(sys.argv) != 2:
         print("Error in call. Usage: python3 main <file_path>")
         exit(-1)
 
@@ -273,7 +279,7 @@ if __name__ == "__main__":
     print("========================================")
     print("=========== Photo Slideshow ============")
 
-    while(True):
+    while (True):
         print("")
         print("|         1. Create Slideshow          |")
         print("|         2. Quit                      |")
@@ -288,4 +294,5 @@ if __name__ == "__main__":
             print("=============== Goodbye ================")
             print("")
             exit(0)
-        else: print("-------- Select a valid option! --------")
+        else:
+            print("-------- Select a valid option! --------")

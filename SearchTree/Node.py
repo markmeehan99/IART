@@ -25,23 +25,37 @@ def simulated_annealing(init, func, heuristic, init_T, alpha, to_csv):
 
     while round(T) != 0:
         nextnode = None
+        nextnodefunc = None
         while nextnode is None:
-            nextnode = func[random.randint(0, len(func) - 1)](node)
+            i = random.randint(0, len(func) - 1)
+            nextnode = func[i](node)
+            nextnodefunc = func[i].__name__
         nextEval = heuristic(nextnode)
         delta_e = nextEval - nodeEval
         if delta_e > 0:
+            print("-------------------------------")
+            print("Found better node")
             node = nextnode
             nodeEval = nextEval
         else:
-            if random.random() <= (1 / (1 + exp(-delta_e / T))):
+            if random.random() <= (1 / (1 + exp(delta_e / T))):
+                print("-------------------------------")
+                print("Triggered probability")
                 node = nextnode
                 nodeEval = nextEval
         if nodeEval >= bestEval:
             bestNode = node
             bestEval = nodeEval
         T += -alpha * T
-        print(step, ",", nextEval, ",", T)
-        
+        print("Temperature: ", T)
+        print("ΔE: ", delta_e)
+        print("Function name : ", nextnodefunc)
+        print("Node Score : ", nodeEval)
+        print("Best Node Score : ", bestEval)
+        pl = getattr(node, "plusInfo", None)
+        if callable(pl):
+            print(node.plusInfo())
+        print("-------------------------------")
         if to_csv:
             s = str(step) + "," +  str(nextEval) + "\n"
             file.write(s)
@@ -128,6 +142,9 @@ def tabuSearch(init_sol,
                 maxNeighbour = neighbour
                 maxNeighbourEval = neighbourEval
                 indexToTabu = i
+        if maxNeighbour is None:
+            print("No neighbours")
+            continue
         # Forbid neighbour for n iterations
         tabu[indexToTabu] = tabuTernure
         nextnode = maxNeighbour
