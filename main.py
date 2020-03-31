@@ -294,7 +294,7 @@ def genetic_algorithm_option():
         print(
             "|   2 - Choice by weight, clone the parents with greater score with higher probability"
         )
-        print("|   3 - Each genration pick randomly between 1 and 2")
+        print("|   3 - Each generation pick randomly between 1 and 2")
         op = input("|   Pick one (2 by default): ")
         if op == "1":
             bycombat = True
