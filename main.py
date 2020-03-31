@@ -9,7 +9,7 @@ from SearchTree.Node import *
 import os.path
 from os import path
 
-
+# Generates N solutions
 @timecall
 def gen_N(N, size=200):
     s = []
@@ -18,7 +18,7 @@ def gen_N(N, size=200):
         print(i)
     return s
 
-
+# Simple splice test
 def test_splice(s1=None, s2=None):
     if s1 == None:
         s1 = Slideshow.get_initial_state()
@@ -33,7 +33,7 @@ def test_splice(s1=None, s2=None):
     print(" ")
     return [s3, s4]
 
-
+# Tests N splices
 @timecall
 def test_nsplices(N):
     s1 = Slideshow.get_initial_state()
