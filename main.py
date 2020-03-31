@@ -9,7 +9,7 @@ from SearchTree.Algorithms import *
 import os.path
 from os import path
 
-# Generates N solutions
+
 @timecall
 def gen_N(N, size=200):
     s = []
@@ -18,7 +18,7 @@ def gen_N(N, size=200):
         print(i)
     return s
 
-# Simple splice test
+
 def test_splice(s1=None, s2=None):
     if s1 == None:
         s1 = Slideshow.get_initial_state()
@@ -33,7 +33,7 @@ def test_splice(s1=None, s2=None):
     print(" ")
     return [s3, s4]
 
-# Tests N splices
+
 @timecall
 def test_nsplices(N):
     s1 = Slideshow.get_initial_state()
@@ -294,8 +294,8 @@ def genetic_algorithm_option():
         print(
             "|   2 - Choice by weight, clone the parents with greater score with higher probability"
         )
-        print("|   3 - Each generation pick randomly between 1 and 2")
-        op = input("|   Pick one (2 by default): ")
+        print("|   3 - Each genration pick randomly between 1 and 2")
+        op = input("|   > Pick one (2 by default): ")
         if op == "1":
             bycombat = True
             break
