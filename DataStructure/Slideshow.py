@@ -70,10 +70,12 @@ class Slideshow:
             self.missing_photo_ids_h.add(slide.left_photo.id)
         return True
 
+    # Retrieves the score of a slideshow
     @staticmethod
     def getScore(S):
         return S.calcFullScore()
 
+    # Calculates the score of the self
     def calcFullScore(self):
         n_slides = len(self.slides)
         self.score = 0
@@ -153,7 +155,7 @@ class Slideshow:
         return S if S.add_slide(Slide(p[0], p[1])) else None
 
     # Remove Operator
-    # @attribute Soriginal: 
+    # @attribute Soriginal: Slideshow
     @staticmethod
     def remove_smallest_transition(Soriginal):
         S = deepcopy(Soriginal)
@@ -181,6 +183,8 @@ class Slideshow:
 
         return S if S.remove_slide(S.slides[i]) else None
 
+    # Remove random slide
+    # @attribute Soriginal : Slideshow
     @staticmethod
     def remove_random_slide(Soriginal):
         S = deepcopy(Soriginal)
@@ -188,7 +192,9 @@ class Slideshow:
         i = random.sample(S.slides, 1)[0]
         return S if S.remove_slide(i) else None
 
-    #trade operators
+
+    # Trades two slides
+    # @attribute Soriginal : Slideshow 
     @staticmethod
     def trade_random(Soriginal):
         S = deepcopy(Soriginal)
@@ -212,12 +218,15 @@ class Slideshow:
             S.slides[i1] = slide_aux
             return S
 
+    # Shuffles slides inside a slideshow
     @staticmethod
     def shuffle(Soriginal):
         S = deepcopy(Soriginal)
         random.shuffle(S.slides)
         return S
 
+    
+    # Generates a random solution
     @staticmethod
     @timecall
     def get_initial_state(top=None, exactly=False):
@@ -357,6 +366,7 @@ class Slideshow:
                 result.append(slide)
         return result
 
+    # Prints adittional info
     def plusInfo(self):
         return "Number of photos: " + str(len(
             self.current_photo_ids)) + "\n" + "Number of slides: " + str(
