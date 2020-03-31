@@ -11,10 +11,10 @@ from os import path
 
 
 @timecall
-def gen_N(N):
+def gen_N(N,size=2000):
     s = []
     for i in range(N):
-        s.append(Slideshow.get_initial_state(300, True))
+        s.append(Slideshow.get_initial_state(size,True))
         print(i)
     return s
 
@@ -133,7 +133,7 @@ def hill_climbing_option():
     print("--------------- Finished ---------------")
     print("Solution: " + str(slideshow))
     print("Score: " + str(Slideshow.getScore(slideshow)))
-    
+
 
 def tabu_search_option():
     iter_max = get_iter_max()
@@ -163,7 +163,7 @@ def tabu_search_option():
         Slideshow.remove_random_slide, Slideshow.trade_random,
         Slideshow.trade_random, Slideshow.trade_random, Slideshow.shuffle
     ]
-    
+
     slideshow = tabuSearch(slideshow, operators, Slideshow.getScore, n_iterations, csv, iter_max)
 
     print("--------------- Finished ---------------")
@@ -228,7 +228,7 @@ def genetic_algorithm_option():
 
     while True:
         n_generations = input("|   Insert number of generations (in ]0,100] ; 'default' for 30): ")
-        if n_generations == "default" or n_population == '':
+        if n_generations == "default" or n_generations == '':
             n_generations = 30
         else:
             n_generations = int(n_generations)
@@ -241,7 +241,13 @@ def genetic_algorithm_option():
 
     population = gen_N(n_population)
 
-    slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations)
+    operators = [
+        Slideshow.add_horizontal, Slideshow.add_vertical,
+        Slideshow.remove_smallest_transition, Slideshow.trade_random,
+        Slideshow.trade_random
+    ]
+
+    slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations,mutations=operators,to_csv=csv)
 
     print("--------------- Finished ---------------")
     print("Solution: " + str(slideshow))

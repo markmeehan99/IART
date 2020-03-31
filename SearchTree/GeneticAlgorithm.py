@@ -4,20 +4,37 @@ from copy import deepcopy
 from profilehooks import timecall
 
 
-def geneticAlgorithm(initial_population, fitness, no_generations):
+def geneticAlgorithm(initial_population,
+                     fitness,
+                     no_generations,
+                     mutations=None,
+                     mutate_chance=0.05,
+                     to_csv=False):
     population = initial_population
+    file = None
+    if to_csv:
+        file = open("Genetic_algorithm.csv", "w")
+        file.write("Generation,Min,Max,Average\n")
 
     for n in range(no_generations):
         # Reproduction
         population = reproduction(population)
 
         # Mutation
-
+        if mutations is not None:
+            if isinstance(mutations, list):
+                for j in range(len(population)):
+                    x = random.random()
+                    if x < mutate_chance:
+                        mutation = random.choice(mutations)
+                        print("Mutation on " + str(j) + " " + mutation.__name__)
+                        population[j] = mutation(population[j])
         # Selection
         scores = list(map(fitness, population))
-        population = selection(population, fitness)
-        printGeneration(population, scores, n)
-
+        population = selection(population, scores)
+        printGeneration(population, scores, n, file)
+    if file is not None:
+        file.close()
     return max(population)
 
 
@@ -28,7 +45,7 @@ def choice(objects, weights):
     for i in range(len(chances)):
         if i != 0:
             chances[i] += chances[i - 1]
-        if x > chances[i]:
+        if x < chances[i]:
             return deepcopy(objects[i])
 
 
@@ -44,15 +61,15 @@ def choiceByCombat(population, fitness, N=None):
 def selection(population, fitness, N=None):
     if N is None:
         N = len(population)
-    return [choiceByCombat(population, fitness) for x in range(N)]
+    return [choice(population, fitness) for x in range(N)]
 
 
 @timecall
-def reproduction(population, elitism=True):
+def reproduction(population, elitism=False):
     if elitism:
         pairs = generateElitPairsExtreme(population)
     else:
-        pairs = generateRandomPairs(len(population))
+        pairs = generateRandomPairs(population)
     result = []
     for i in pairs:
         p1 = population[i[0]]
@@ -102,9 +119,16 @@ def generateElitPairsExtreme(population):
     return result
 
 
-def printGeneration(pop, scores, n):
+def printGeneration(pop, scores, n, file):
+    minp = min(scores)
+    maxp = max(scores)
+    avg = round(sum(scores) / len(scores))
     print("Generation " + str(n) + ":")
     print("Scores: " + str(sorted(scores)))
-    print("Min : " + str(min(scores)))
-    print("Max : " + str(max(scores)))
-    print("Avg : " + str(sum(scores) / len(scores)))
+    print("Min : " + str(minp))
+    print("Max : " + str(maxp))
+    print("Avg : " + str(avg))
+    if file is not None:
+        s = str(n) + "," + str(minp) + "," + str(maxp) + "," + str(avg) + "\n"
+        file.write(s)
+
