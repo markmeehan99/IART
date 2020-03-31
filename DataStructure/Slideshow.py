@@ -199,6 +199,7 @@ class Slideshow:
     def get_initial_state(top=None, exactly=False):
         n_verticalp = Slideshow.v_photos_size
         n_horizontalp = Slideshow.h_photos_size
+        
         n_max_slides = top
         if top is None:
             n_max_slides = n_horizontalp
@@ -332,3 +333,5 @@ class Slideshow:
         return "Number of photos: " + str(len(
             self.current_photo_ids)) + "\n" + "Number of slides: " + str(
                 len(self.slides))
+
+    __str__=__repr__

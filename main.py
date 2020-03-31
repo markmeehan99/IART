@@ -51,6 +51,7 @@ def display_create_slideshow():
         if file_path == 'q':
             break
         elif path.exists(file_path):
+            parse_input_file(file_path)
             display_algorithm_options()
         else: print("|-------- File does not exist ---------|")
 
@@ -64,30 +65,31 @@ def display_algorithm_options():
         print("|        5. Quit                       |")
         print("")
         
-        option = int(input("|   Select  "))
+        option = input("|   Select  ")
 
-        if option == 1:
+        if option == "1":
             hill_climbing_option()
-        elif option == 2:
+        elif option == "2":
             tabu_search_option()
-        elif option == 3:
+        elif option == "3":
             simulated_annealing_option()
-        elif option == 4:
+        elif option == "4":
             genetic_algorithm_option()
         else: print("-------- Select a valid option! --------")
 
 
-def get_csv_option(csv):
+def get_csv_option():
     while True:
-        csv = input("|   Do you wish to save the development in csv format (yes/no): ")
-        if csv == "yes":
+        csv = input("|   Do you wish to save the development in csv format (y/n): ")
+
+        if csv == "y":
             csv = True
-        if csv == "no":
+        elif csv == "n":
             csv = False
         else:
             print("------------ Invalid value -------------")
             continue
-        break
+        return csv
 
 def hill_climbing_option():
     while True:
@@ -101,8 +103,7 @@ def hill_climbing_option():
                 continue
         break
 
-    csv = False
-    get_csv_option(csv)
+    csv = get_csv_option()
 
     operators = [
         Slideshow.add_horizontal,
@@ -123,8 +124,8 @@ def hill_climbing_option():
     hillClimb(slideshow, operators, Slideshow.getScore, csv, iter_max)
 
     print("--------------- Finished ---------------")
-    print("Solution: " + print(slideshow))
-    print("Score: " + slideshow.getScore)
+    print("Solution: " + str(slideshow))
+    print("Score: " + str(slideshow.getScore))
     
 
 def tabu_search_option():
@@ -149,8 +150,7 @@ def tabu_search_option():
                 continue
         break
 
-    csv = False
-    get_csv_option(csv)
+    csv = get_csv_option()
 
     operators = [
         Slideshow.add_horizontal,
@@ -171,8 +171,8 @@ def tabu_search_option():
     tabuSearch(slideshow, operators, Slideshow.getScore, csv, n_interations, iter_max)
 
     print("--------------- Finished ---------------")
-    print("Solution: " + print(slideshow))
-    print("Score: " + slideshow.getScore)
+    print("Solution: " + str(slideshow))
+    print("Score: " + str(slideshow.getScore))
 
 
 def simulated_annealing_option():
@@ -198,8 +198,7 @@ def simulated_annealing_option():
                 continue
         break
 
-    csv = False
-    get_csv_option(csv)
+    csv = get_csv_option()
     
     operators = [Slideshow.add_horizontal, Slideshow.add_vertical, 
         Slideshow.remove_smallest_transition, Slideshow.trade_random, Slideshow.trade_random]
@@ -209,8 +208,8 @@ def simulated_annealing_option():
     simulated_annealing(slideshow, operators, Slideshow.getScore, init_T, alpha, csv)
 
     print("--------------- Finished ---------------")
-    print("Solution: " + print(slideshow))
-    print("Score: " + slideshow.getScore)
+    print("Solution: " + str(slideshow))
+    print("Score: " + str(slideshow.getScore))
 
 
 def genetic_algorithm_option(): 
@@ -236,16 +235,15 @@ def genetic_algorithm_option():
                 continue
         break
 
-    csv = False
-    get_csv_option(csv)
+    csv = get_csv_option()
 
     population = gen_N(n_population)
 
     slideshow = geneticAlgorithm(population, Slideshow.getScore, n_generations, csv)
 
     print("--------------- Finished ---------------")
-    print("Solution: " + print(slideshow))
-    print("Score: " + slideshow.getScore)
+    print("Solution: " + str(slideshow))
+    print("Score: " + str(slideshow.getScore))
 
 
 if __name__ == "__main__":
