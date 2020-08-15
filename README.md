@@ -1,5 +1,8 @@
 # IART
 
+## Description
+Project developed in the Artificial Intelligence class. Solution for the 2017 Google Hash Code challenge, using different algorithms.
+
 ## Compile and Run
  Since the project was built in Python, the only requirement for running with the command line is having python3 installed in the OS - it is already built in Linux (or run in IDEs with Python extensions).
 
